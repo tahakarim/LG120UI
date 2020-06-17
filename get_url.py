@@ -21,18 +21,21 @@ def get_url(env, api):
     if env == 'dev':
         url = "https://6mtj5tibl2.execute-api.us-east-1.amazonaws.com/prod/"
     elif env == 'stg':
-        url = "https://api.stg.agco-fuse-services.com/fleet-logistics/"
+        ##url = "https://api.stg.agco-fuse-services.com/fleet-logistics/"
+        url = "https://b9v0lf0vc8.execute-api.eu-west-1.amazonaws.com/Stage/"
     elif env == 'prod':
-        url = "https://api.agco-fuse-services.com/fleet-logistics/"
+        ##url = "https://api.agco-fuse-services.com/fleet-logistics/"
+        url = "https://z9launlk3h.execute-api.eu-west-1.amazonaws.com/stable/"
     else:
         logger.error("Should not get here: get_url.py:23")
         exit(22)
 
-    if env != 'dev':
-        url = url + api + '/'
+    logger.debug(url)
+    #if env != 'dev':
+    #    url = url + api + '/'
 
     return url
 
 
 if __name__ == "__main__":
-    get_url()
+    get_url("stg", "v1alpha1")
