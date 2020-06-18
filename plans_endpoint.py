@@ -29,9 +29,8 @@ def plans_post(env, api, auth, level):
     logger = logging.getLogger('api_testing')
     logger.setLevel(level)
 
-    res_token = oauth(env, auth)
-    logger.debug("Response_Token: {0}".format(res_token))
-    access_token = res_token['access_token']
+    access_token = oauth(env, auth)
+    logger.debug("Response_Token: {0}".format(access_token))
 
     url = get_url(env, api) + 'plans'
 
@@ -89,9 +88,8 @@ def plans_post_payload_exception(env, api, auth, level, payload):
     logger = logging.getLogger('api_testing')
     logger.setLevel(level)
 
-    res_token = oauth(env, auth)
-    logger.debug("Response_Token: {0}".format(res_token))
-    access_token = res_token['access_token']
+    access_token = oauth(env, auth)
+    logger.debug("Response_Token: {0}".format(access_token))
 
     url = get_url(env, api) + 'plans'
 
@@ -134,9 +132,8 @@ def plans_get(env, api, auth, level, page_num=None, page_size=None):
     logger = logging.getLogger('api_testing')
     logger.setLevel(level)
 
-    res_token = oauth(env, auth)
-    logger.debug("Response_Token: {0}".format(res_token))
-    access_token = res_token['access_token']
+    access_token = oauth(env, auth)
+    logger.debug("Response_Token: {0}".format(access_token))
 
     url = get_url(env, api) + 'plans'
     logger.debug(url)
@@ -209,9 +206,8 @@ def plans_get_by_id(env, api, auth, level, id, page_num=None, page_size=None):
     logger = logging.getLogger('api_testing')
     logger.setLevel(level)
 
-    res_token = oauth(env, auth)
-    logger.debug("Response_Token: {0}".format(res_token))
-    access_token = res_token['access_token']
+    access_token = oauth(env, auth)
+    logger.debug("Response_Token: {0}".format(access_token))
 
     url = get_url(env, api) + 'plans/' + id
     logger.debug(url)
@@ -284,9 +280,8 @@ def plans_get_status(env, api, auth, level, id, page_num=None, page_size=None):
     logger = logging.getLogger('api_testing')
     logger.setLevel(level)
 
-    res_token = oauth(env, auth)
-    logger.debug("Response_Token: {0}".format(res_token))
-    access_token = res_token['access_token']
+    access_token = oauth(env, auth)
+    logger.debug("Response_Token: {0}".format(access_token))
 
     url = get_url(env, api) + 'plans/' + id + '/status'
     logger.debug(url)

@@ -2,7 +2,8 @@ import json
 import logging
 import pytest
 import random
-from plans_endpoint import plans_get, plans_post, plans_get_by_id, plans_get_status, plans_post_payload_exception
+from plans_endpoint import plans_get, plans_post, plans_get_by_id, \
+    plans_get_status, plans_post_payload_exception
 from requests_toolbelt.utils import dump
 
 '''
@@ -186,22 +187,26 @@ def test_plans_get_by_invalid_guid_id(env, api, auth, level):
 
     return: None
     """
-    response = plans_get_by_id(env, api, auth, level, 'acebdfac-ebdf-aceb-dfac-ebdfacebdfac')
+    response = plans_get_by_id(env, api, auth, level,
+                               'acebdfac-ebdf-aceb-dfac-ebdfacebdfac')
     json_response = response.json()
 
     assert response.status_code == 404
 
     # Validating the error message
-    assert json_response['message'] == 'Could not find a plan with plan id acebdfac-ebdf-aceb-dfac-ebdfacebdfac.'
+    assert json_response['message'] == 'Could not find a plan with plan id ' \
+            'acebdfac-ebdf-aceb-dfac-ebdfacebdfac.'
 
 
 def test_plans_get_by_invalid_non_guid_id(env, api, auth, level):
     """
-    Test to validate that we get an error when passing in an invalid format for an ID
+    Test to validate that we get an error when passing in an invalid format for
+    an ID
 
     return: None
     """
-    response = plans_get_by_id(env, api, auth, level, 'spider-man_heart_gwen_stacey')
+    response = plans_get_by_id(env, api, auth, level,
+                               'spider-man_heart_gwen_stacey')
 
     assert response.status_code == 400
 
@@ -242,22 +247,26 @@ def test_plans_get_status_invalid_guid_id(env, api, auth, level):
 
     return: None
     """
-    response = plans_get_status(env, api, auth, level, 'acebdfac-ebdf-aceb-dfac-ebdfacebdfac')
+    response = plans_get_status(env, api, auth, level,
+                                'acebdfac-ebdf-aceb-dfac-ebdfacebdfac')
     json_response = response.json()
 
     assert response.status_code == 404
 
     # Validating the error message
-    assert json_response['message'] == 'Could not find a status with the plan id acebdfac-ebdf-aceb-dfac-ebdfacebdfac'
+    assert json_response['message'] == 'Could not find a status with the ' \
+            'plan id acebdfac-ebdf-aceb-dfac-ebdfacebdfac'
 
 
 def test_plans_get_status_invalid_non_guid_id(env, api, auth, level):
     """
-    Test to validate that we get an error when passing in an invalid formatted ID
+    Test to validate that we get an error when passing in an invalid formatted
+    ID
 
     return: None
     """
-    response = plans_get_status(env, api, auth, level, 'spider-man_heart_gwen_stacey')
+    response = plans_get_status(env, api, auth, level,
+                                'spider-man_heart_gwen_stacey')
 
     assert response.status_code == 400
 
