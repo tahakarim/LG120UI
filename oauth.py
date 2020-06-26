@@ -12,11 +12,14 @@ def oauth(env, auth):
     """
     Function to get the oauth2 tokens
 
+    :param env: Which environment type to run (default: 'stg')
+    :type auth: str
+
     :param auth: Which oauth type to run (default: 'aaa')
     :type auth: str
 
-    :return: json object of tokens and other data
-    :rtype: JSON
+    :return: access token
+    :rtype: str
     """
 
     logger = logging.getLogger('api_testing')

@@ -9,7 +9,7 @@ def pytest_addoption(parser):
     return: None
     """
 
-    parser.addoption("--env", action="store", default="dev", dest="env",
+    parser.addoption("--env", action="store", default="stg", dest="env",
                      choices=['dev', 'stg', 'prod'])
     parser.addoption("--api", action="store", default="v1alpha1", dest="api",
                      choices=['v1alpha1'])
