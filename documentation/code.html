@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Generated Documentation &#8212; Fleet Logistics 0.0.0.01 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to Fleet Logistics’s Test documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-get_url">
+<span id="auto-generated-documentation"></span><h1>Auto Generated Documentation<a class="headerlink" href="#module-get_url" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="get_url.get_url">
+<code class="sig-prename descclassname">get_url.</code><code class="sig-name descname">get_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em><span class="sig-paren">)</span><a class="headerlink" href="#get_url.get_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to get the url to use to send api requests</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>environment</strong> (<em>str</em>) – The environment to run in development ‘dev’, staging     ‘stg’, or production ‘prod’</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The api version to run</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The url with the correct environment and versions strings</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-oauth"></span><dl class="py function">
+<dt id="oauth.oauth">
+<code class="sig-prename descclassname">oauth.</code><code class="sig-name descname">oauth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">auth</span></em><span class="sig-paren">)</span><a class="headerlink" href="#oauth.oauth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to get the oauth2 tokens</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – Which environment type to run (default: ‘stg’)</p></li>
+<li><p><strong>auth</strong> (<em>str</em>) – Which oauth type to run (default: ‘aaa’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>access token</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-plans_endpoint"></span><dl class="py function">
+<dt id="plans_endpoint.plans_get">
+<code class="sig-prename descclassname">plans_endpoint.</code><code class="sig-name descname">plans_get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em>, <em class="sig-param"><span class="n">page_num</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">page_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plans_endpoint.plans_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to run the get plans endpoint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em>) – The environment to run in development ‘dev’, staging     ‘stg’, or production ‘prod’ (default: ‘dev’)</p></li>
+<li><p><strong>api</strong> (<em>str</em>) – The api version to run (default: ‘v1alpha1’)</p></li>
+<li><p><strong>auth</strong> (<em>str</em>) – Which oauth type to run (default: ‘aaa’)</p></li>
+<li><p><strong>level</strong> (<em>str</em>) – </p></li>
+<li><p><strong>page_num</strong> (<em>int</em>) – </p></li>
+<li><p><strong>page_size</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the requests object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="plans_endpoint.plans_get_by_id">
+<code class="sig-prename descclassname">plans_endpoint.</code><code class="sig-name descname">plans_get_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em>, <em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">page_num</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">page_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plans_endpoint.plans_get_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to run the get plans with an ID endpoint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em>) – The environment to run in development ‘dev’, staging     ‘stg’, or production ‘prod’ (default: ‘dev’)</p></li>
+<li><p><strong>api</strong> (<em>str</em>) – The api version to run (default: ‘v1alpha1’)</p></li>
+<li><p><strong>auth</strong> (<em>str</em>) – Which oauth type to run (default: ‘aaa’)</p></li>
+<li><p><strong>level</strong> (<em>str</em>) – </p></li>
+<li><p><strong>id</strong> – The plan ID that should be returned.</p></li>
+<li><p><strong>page_num</strong> (<em>int</em>) – </p></li>
+<li><p><strong>page_size</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the requests object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="plans_endpoint.plans_get_status">
+<code class="sig-prename descclassname">plans_endpoint.</code><code class="sig-name descname">plans_get_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em>, <em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">page_num</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">page_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plans_endpoint.plans_get_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to run the get plans status endpoint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em>) – The environment to run in development ‘dev’, staging     ‘stg’, or production ‘prod’ (default: ‘dev’)</p></li>
+<li><p><strong>api</strong> (<em>str</em>) – The api version to run (default: ‘v1alpha1’)</p></li>
+<li><p><strong>auth</strong> (<em>str</em>) – Which oauth type to run (default: ‘aaa’)</p></li>
+<li><p><strong>level</strong> (<em>str</em>) – </p></li>
+<li><p><strong>id</strong> – The plan ID that should be returned.</p></li>
+<li><p><strong>page_num</strong> (<em>int</em>) – </p></li>
+<li><p><strong>page_size</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the requests object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="plans_endpoint.plans_post">
+<code class="sig-prename descclassname">plans_endpoint.</code><code class="sig-name descname">plans_post</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plans_endpoint.plans_post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to run the post plans endpoint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em>) – The environment to run in development ‘dev’, staging     ‘stg’, or production ‘prod’ (default: ‘dev’)</p></li>
+<li><p><strong>api</strong> (<em>str</em>) – The api version to run (default: ‘v1alpha1’)</p></li>
+<li><p><strong>auth</strong> (<em>str</em>) – Which oauth type to run (default: ‘aaa’)</p></li>
+<li><p><strong>level</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the requests object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="plans_endpoint.plans_post_payload_exception">
+<code class="sig-prename descclassname">plans_endpoint.</code><code class="sig-name descname">plans_post_payload_exception</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em>, <em class="sig-param"><span class="n">payload</span></em><span class="sig-paren">)</span><a class="headerlink" href="#plans_endpoint.plans_post_payload_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to run the post plans endpoint with custom payloads</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em>) – The environment to run in development ‘dev’, staging     ‘stg’, or production ‘prod’ (default: ‘dev’)</p></li>
+<li><p><strong>api</strong> (<em>str</em>) – The api version to run (default: ‘v1alpha1’)</p></li>
+<li><p><strong>auth</strong> (<em>str</em>) – Which oauth type to run (default: ‘aaa’)</p></li>
+<li><p><strong>level</strong> (<em>dictionary</em>) – </p></li>
+<li><p><strong>payload</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the requests object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-test_plans_endpoint"></span><dl class="py function">
+<dt id="test_plans_endpoint.test_plans_created_date_validation">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_created_date_validation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_created_date_validation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that the created_date is the same between POST and GET</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_get_by_id_response_validation">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_by_id_response_validation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_by_id_response_validation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that we are returning one status and that it is
+the correct status</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_get_by_invalid_guid_id">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_by_invalid_guid_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_by_invalid_guid_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that we get an error when passing in an invalid ID</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_get_by_invalid_non_guid_id">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_by_invalid_non_guid_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_by_invalid_non_guid_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that we get an error when passing in an invalid format for
+an ID</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_get_response_at_least_one_returned">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_response_at_least_one_returned</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_response_at_least_one_returned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify at least one status is returned.</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_get_response_validation">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_response_validation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_response_validation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify the fields are correct in a plans get response
+We will be validating the key exists, not NULL and correct type.</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_get_status_invalid_guid_id">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_status_invalid_guid_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_status_invalid_guid_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that we get an error when passing in an invalid ID</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_get_status_invalid_non_guid_id">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_status_invalid_non_guid_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_status_invalid_non_guid_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that we get an error when passing in an invalid formatted
+ID</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_get_status_no_id">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_status_no_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_status_no_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that the created_date is the same between POST and GET</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_get_status_response_validation">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_status_response_validation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_status_response_validation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that we are returning one status and that it is
+the correct status</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_response_no_payload">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_response_no_payload</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_response_no_payload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to ensure an error is returned with an empty payload</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_response_validation">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_response_validation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_response_validation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify the fields are correct in a plans post response
+We will be validating the key exists, not NULL and correct type.</p>
+<p>return: None</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Fleet Logistics</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Auto Generated Documentation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Fleet Logistics’s Test documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Kalyn Kovac.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/code.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
