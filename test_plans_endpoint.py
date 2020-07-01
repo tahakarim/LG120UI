@@ -5,6 +5,7 @@ import random
 from plans_endpoint import plans_get, plans_post, plans_get_by_id, \
     plans_get_status, plans_post_payload_exception
 from requests_toolbelt.utils import dump
+from statistics import median, stdev
 
 '''
 @pytest.fixture
@@ -329,6 +330,38 @@ def test_plans_get_status_no_id(env, api, auth, level):
     print("\n" + response.url)
 
     assert response.status_code == 400
+
+
+@pytest.mark.performance
+def test_plans_get_response_performance(env, api, auth, level):
+    """
+    Test to validate the response time of GET /plans over
+    multiple iterations.
+
+    return: None
+    """
+
+    count = 1
+    iterations = 100
+    response_time_list = []
+
+    while count <= iterations:
+        response = plans_get(env, api, auth, level)
+
+        # converting total_seconds to milliseconds and truncating decimal
+        response_time_list.append(int(response.elapsed.total_seconds() * 1000))
+        count += 1
+
+    print("\nMinimum: {0}".format(min(response_time_list)))
+    print("Maximum: {0}".format(max(response_time_list)))
+    print("Average: {0}".format((sum(response_time_list)/len(response_time_list))))
+    print(" Median: {0}".format(median(response_time_list)))
+    print(" StdDev: {0:.2f}".format(stdev(response_time_list)))
+
+    logger = logging.getLogger('api_testing')
+    logger.setLevel(level)
+
+    logger.debug(response_time_list)
 
 
 if __name__ == "__main__":
