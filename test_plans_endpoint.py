@@ -20,6 +20,8 @@ def response(env, api, auth, level):
 '''
 
 
+@pytest.mark.functionality
+@pytest.mark.smoke
 def test_plans_post_response_validation(env, api, auth, level):
     """
     Test to verify the fields are correct in a plans post response
@@ -46,6 +48,7 @@ def test_plans_post_response_validation(env, api, auth, level):
     assert id is not None
 
 
+@pytest.mark.exception
 def test_plans_post_response_no_payload(env, api, auth, level):
     """
     Test to ensure an error is returned with an empty payload
@@ -63,6 +66,8 @@ def test_plans_post_response_no_payload(env, api, auth, level):
     #assert 'message' not in json_response
 
 
+@pytest.mark.functionality
+@pytest.mark.smoke
 def test_plans_get_response_validation(env, api, auth, level):
     """
     Test to verify the fields are correct in a plans get response
@@ -135,9 +140,11 @@ def test_plans_get_response_validation(env, api, auth, level):
         assert len(item['status']) == 4
 
 
+@pytest.mark.functionality
+@pytest.mark.smoke
 def test_plans_get_response_at_least_one_returned(env, api, auth, level):
     """
-    Test to verify at least one status is returned.
+    Test to verify at least one plan id is returned.
 
     return: None
     """
@@ -154,6 +161,8 @@ def test_plans_get_response_at_least_one_returned(env, api, auth, level):
     assert len(json_response) >= 1
 
 
+@pytest.mark.functionality
+@pytest.mark.smoke
 def test_plans_get_by_id_response_validation(env, api, auth, level):
     """
     Test to validate that we are returning one status and that it is
@@ -181,6 +190,7 @@ def test_plans_get_by_id_response_validation(env, api, auth, level):
     assert json_response['plan_id'] == plan_id
 
 
+@pytest.mark.exception
 def test_plans_get_by_invalid_guid_id(env, api, auth, level):
     """
     Test to validate that we get an error when passing in an invalid ID
@@ -198,6 +208,7 @@ def test_plans_get_by_invalid_guid_id(env, api, auth, level):
             'acebdfac-ebdf-aceb-dfac-ebdfacebdfac.'
 
 
+@pytest.mark.exception
 def test_plans_get_by_invalid_non_guid_id(env, api, auth, level):
     """
     Test to validate that we get an error when passing in an invalid format for
@@ -211,6 +222,8 @@ def test_plans_get_by_invalid_non_guid_id(env, api, auth, level):
     assert response.status_code == 400
 
 
+@pytest.mark.functionality
+@pytest.mark.smoke
 def test_plans_get_status_response_validation(env, api, auth, level):
     """
     Test to validate that we are returning one status and that it is
@@ -241,6 +254,7 @@ def test_plans_get_status_response_validation(env, api, auth, level):
     assert json_response['updated_date'] == status_updated_date
 
 
+@pytest.mark.exception
 def test_plans_get_status_invalid_guid_id(env, api, auth, level):
     """
     Test to validate that we get an error when passing in an invalid ID
@@ -258,6 +272,7 @@ def test_plans_get_status_invalid_guid_id(env, api, auth, level):
             'plan id acebdfac-ebdf-aceb-dfac-ebdfacebdfac'
 
 
+@pytest.mark.exception
 def test_plans_get_status_invalid_non_guid_id(env, api, auth, level):
     """
     Test to validate that we get an error when passing in an invalid formatted
@@ -271,6 +286,8 @@ def test_plans_get_status_invalid_non_guid_id(env, api, auth, level):
     assert response.status_code == 400
 
 
+@pytest.mark.functionality
+@pytest.mark.smoke
 def test_plans_created_date_validation(env, api, auth, level):
     """
     Test to validate that the created_date is the same between POST and GET
@@ -295,6 +312,7 @@ def test_plans_created_date_validation(env, api, auth, level):
     assert json_response['created_date'] == created_date
 
 
+@pytest.mark.exception
 def test_plans_get_status_no_id(env, api, auth, level):
     """
     Test to validate that the created_date is the same between POST and GET
