@@ -368,7 +368,7 @@ def test_plans_get_response_performance(env, api, auth, level):
                                                     stdev(response_time_list))
 
 
-    post_message_to_slack(test_data)
+    post_message_to_slack(test_data, level)
 
     logger = logging.getLogger('api_testing')
     logger.setLevel(level)

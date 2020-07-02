@@ -2,12 +2,15 @@ import requests
 import logging
 
 
-def post_message_to_slack(text_incoming):
+def post_message_to_slack(text_incoming, level):
     """
     Function to send messages to the aether_test_alerts channel on slack
 
     :param text_incoming: Message to be printed on slack
     :type text_incoming: str
+
+    :param level: debug level
+    :type level: str
 
     :return: none
     :rtype: none
