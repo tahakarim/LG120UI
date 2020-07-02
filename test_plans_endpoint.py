@@ -6,6 +6,8 @@ from plans_endpoint import plans_get, plans_post, plans_get_by_id, \
     plans_get_status, plans_post_payload_exception
 from requests_toolbelt.utils import dump
 from statistics import median, stdev
+from slack import post_message_to_slack
+
 
 '''
 @pytest.fixture
@@ -342,7 +344,7 @@ def test_plans_get_response_performance(env, api, auth, level):
     """
 
     count = 1
-    iterations = 100
+    iterations = 2
     response_time_list = []
 
     while count <= iterations:
@@ -357,6 +359,16 @@ def test_plans_get_response_performance(env, api, auth, level):
     print("Average: {0}".format((sum(response_time_list)/len(response_time_list))))
     print(" Median: {0}".format(median(response_time_list)))
     print(" StdDev: {0:.2f}".format(stdev(response_time_list)))
+
+    test_data = "Minimum: {0}\nMaximum: {1}\nAverage: {2}\n Median: {3}\n StdDev: {4:.2f}".format\
+                                                    (min(response_time_list),
+                                                    max(response_time_list),
+                                                    sum(response_time_list) / len(response_time_list),
+                                                    median(response_time_list),
+                                                    stdev(response_time_list))
+
+
+    post_message_to_slack(test_data)
 
     logger = logging.getLogger('api_testing')
     logger.setLevel(level)
