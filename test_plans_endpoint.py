@@ -8,6 +8,7 @@ from requests_toolbelt.utils import dump
 from statistics import median, stdev
 from slack import post_message_to_slack
 from copy import deepcopy
+from time import sleep
 
 
 @pytest.mark.functionality
@@ -587,36 +588,6 @@ def test_plans_get_status_invalid_non_guid_id(env, api, auth, level):
     assert response.status_code == 400
 
 
-@pytest.mark.functionality
-@pytest.mark.smoke
-def test_plans_created_date_validation(env, api, auth, level):
-    """
-    Test to validate that the created_date is the same between POST and GET
-
-    return: None
-    """
-    payload = deepcopy(config.payload)
-    payload = json.dumps(payload)
-
-    response = plans_post_payload(env, api, auth, level, payload)
-
-    assert response.status_code == 200
-
-    json_response = response.json()
-
-    created_date = json_response['created_date']
-    plan_id = json_response['plan_id']
-
-    # Send a GET /plans by ID
-    response = plans_get_by_id(env, api, auth, level, plan_id)
-    json_response = response.json()
-
-    assert response.status_code == 200
-
-    assert json_response['plan_id'] == plan_id
-    assert json_response['created_date'] == created_date
-
-
 @pytest.mark.exception
 def test_plans_get_status_no_id(env, api, auth, level):
     """
@@ -658,7 +629,7 @@ def test_plans_get_response_performance(env, api, auth, level):
 
     print("\nMinimum: {0}".format(min(response_time_list)))
     print("Maximum: {0}".format(max(response_time_list)))
-    print("Average: {0}".format((sum(response_time_list)/len(response_time_list))))
+    print("Average: {0}".format((sum(response_time_list) / len(response_time_list))))
     print(" Median: {0}".format(median(response_time_list)))
     print(" StdDev: {0:.2f}".format(stdev(response_time_list)))
 
@@ -708,7 +679,7 @@ def test_plans_get_id_response_performance(env, api, auth, level):
 
     print("\nMinimum: {0}".format(min(response_time_list)))
     print("Maximum: {0}".format(max(response_time_list)))
-    print("Average: {0}".format((sum(response_time_list)/len(response_time_list))))
+    print("Average: {0}".format((sum(response_time_list) / len(response_time_list))))
     print(" Median: {0}".format(median(response_time_list)))
     print(" StdDev: {0:.2f}".format(stdev(response_time_list)))
 
@@ -758,7 +729,7 @@ def test_plans_get_status_response_performance(env, api, auth, level):
 
     print("\nMinimum: {0}".format(min(response_time_list)))
     print("Maximum: {0}".format(max(response_time_list)))
-    print("Average: {0}".format((sum(response_time_list)/len(response_time_list))))
+    print("Average: {0}".format((sum(response_time_list) / len(response_time_list))))
     print(" Median: {0}".format(median(response_time_list)))
     print(" StdDev: {0:.2f}".format(stdev(response_time_list)))
 
@@ -778,6 +749,70 @@ def test_plans_get_status_response_performance(env, api, auth, level):
     logger.setLevel(level)
 
     logger.debug(response_time_list)
+
+
+@pytest.mark.functionality
+@pytest.mark.smoke
+def test_plans_step_name_validation(env, api, auth, level):
+    """
+    Test to validate that the stepname is the updated correctly
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    created_date = json_response['created_date']
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    assert json_response['plan_id'] == plan_id
+    assert json_response['created_date'] == created_date
+
+    started_validated = 0
+    configure_plan_validated = 0
+    exit_flag = 0
+    sleep_counter = 0
+
+    while exit_flag == 0 and sleep_counter <= 20:
+
+        if json_response['status']['step_name'] == "Started" and started_validated == 0:
+            ''' This is step 1 validation'''
+            assert json_response['status']['step_name'] == "Started"
+            assert json_response['updated_date'] != created_date
+            assert json_response['updated_date'] == json_response['status']['updated_date']
+            assert json_response['status']['has_error'] is False
+            assert json_response['status']['is_complete'] is False
+            started_validated = 1
+            print("\nStep_Started Validated")
+
+        elif json_response['status']['step_name'] == "Configuring Plan" and configure_plan_validated == 0:
+            ''' This is step 2 validation'''
+            assert json_response['status']['step_name'] == "Configuring Plan"
+            assert json_response['updated_date'] != created_date
+            assert json_response['updated_date'] == json_response['status']['updated_date']
+            assert json_response['status']['has_error'] is False
+            assert json_response['status']['is_complete'] is False
+            configure_plan_validated = 1
+            print("Step_Configuring Plan Validated")
+            exit_flag = 1
+            sleep_counter = 0
+
+        sleep_counter += 1
+        sleep(1)
+
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
 
 
 @pytest.mark.skip(reason="Not written - future test")
