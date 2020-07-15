@@ -1,7 +1,5 @@
 import random
 
-from plans_endpoint import plans_get_by_id
-
 
 def helper_random_fieldpoint(corner1, corner2):
     """
