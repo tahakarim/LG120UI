@@ -172,13 +172,6 @@
 </dd></dl>
 
 <span class="target" id="module-test_plans_endpoint"></span><dl class="py function">
-<dt id="test_plans_endpoint.test_plans_created_date_validation">
-<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_created_date_validation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_created_date_validation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test to validate that the created_date is the same between POST and GET</p>
-<p>return: None</p>
-</dd></dl>
-
-<dl class="py function">
 <dt id="test_plans_endpoint.test_plans_get_by_id_response_validation">
 <code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_by_id_response_validation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_by_id_response_validation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test to validate that we are returning one status and that it is
@@ -336,6 +329,20 @@ Degrees, minutes, and seconds (DMS): 41°24’12.2”N 2°10’26.5”E</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_missing_field_boundary_boundary_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_boundary_boundary_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_boundary_boundary_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the boundary data is missing</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_missing_field_boundary_boundary_lat_long_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_boundary_boundary_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_boundary_boundary_lat_long_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if an empty boundary payload data is sent</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="test_plans_endpoint.test_plans_post_missing_field_boundary_key">
 <code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_boundary_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_boundary_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test to verify we receive a 400 status if the boundary data is missing</p>
@@ -343,23 +350,30 @@ Degrees, minutes, and seconds (DMS): 41°24’12.2”N 2°10’26.5”E</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="test_plans_endpoint.test_plans_post_missing_field_boundary_lat_long_key">
-<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_boundary_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_boundary_lat_long_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test to verify we receive a 400 status if an empty boundary payload data is sent</p>
+<dt id="test_plans_endpoint.test_plans_post_missing_field_gates_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_gates_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_gates_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the gates key is missing</p>
 <p>return: None</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="test_plans_endpoint.test_plans_post_missing_field_gate_key">
-<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_gate_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_gate_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test to verify we receive a 400 status if the gate data is missing</p>
+<dt id="test_plans_endpoint.test_plans_post_missing_field_gates_lat_long_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_gates_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_gates_lat_long_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the gates data is empty</p>
 <p>return: None</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="test_plans_endpoint.test_plans_post_missing_field_gate_lat_long_key">
-<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_gate_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_gate_lat_long_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test to verify we receive a 400 status if the gate data is empty</p>
+<dt id="test_plans_endpoint.test_plans_post_missing_field_gates_point_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_gates_point_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_gates_point_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the point key is missing</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_missing_field_gates_point_lat_long_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_gates_point_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_gates_point_lat_long_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the point data is empty</p>
 <p>return: None</p>
 </dd></dl>
 
@@ -385,16 +399,23 @@ Degrees, minutes, and seconds (DMS): 41°24’12.2”N 2°10’26.5”E</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="test_plans_endpoint.test_plans_post_missing_field_row_direction_key">
-<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_row_direction_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_row_direction_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test to verify we receive a 400 status if the row_direction data is missing</p>
+<dt id="test_plans_endpoint.test_plans_post_missing_field_obstacles_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_obstacles_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_obstacles_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the obstacles key is missing</p>
 <p>return: None</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="test_plans_endpoint.test_plans_post_missing_field_row_direction_lat_long_key">
-<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_row_direction_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_row_direction_lat_long_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test to verify we receive a 400 status if the row_direction data is empty</p>
+<dt id="test_plans_endpoint.test_plans_post_missing_field_obstacles_lat_long_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_obstacles_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_obstacles_lat_long_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the obstacles data is empty</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_missing_field_soil_type_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_soil_type_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_soil_type_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the soil type key is missing</p>
 <p>return: None</p>
 </dd></dl>
 
@@ -406,6 +427,13 @@ Degrees, minutes, and seconds (DMS): 41°24’12.2”N 2°10’26.5”E</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_missing_headland_width_optimized_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_headland_width_optimized_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_headland_width_optimized_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the headland_width_optimized data is missing</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="test_plans_endpoint.test_plans_post_missing_is_ctf_key">
 <code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_is_ctf_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_is_ctf_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test to verify we receive a 400 status if the is_ctf data is missing</p>
@@ -413,15 +441,22 @@ Degrees, minutes, and seconds (DMS): 41°24’12.2”N 2°10’26.5”E</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="test_plans_endpoint.test_plans_post_missing_is_headland_width_optimized_key">
-<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_is_headland_width_optimized_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_is_headland_width_optimized_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test to verify we receive a 400 status if the is_headland_width_optimized data is missing</p>
+<dt id="test_plans_endpoint.test_plans_post_missing_key_field_id_value">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_key_field_id_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_key_field_id_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the row_direction data is empty</p>
 <p>return: None</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="test_plans_endpoint.test_plans_post_missing_key_field_id_value">
-<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_key_field_id_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_key_field_id_value" title="Permalink to this definition">¶</a></dt>
+<dt id="test_plans_endpoint.test_plans_post_missing_row_direction_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_row_direction_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_row_direction_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 400 status if the row_direction data is missing</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_missing_row_direction_lat_long_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_row_direction_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_row_direction_lat_long_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test to verify we receive a 400 status if the row_direction data is empty</p>
 <p>return: None</p>
 </dd></dl>
@@ -466,6 +501,13 @@ We will be validating the key exists, not NULL and correct type.</p>
 <dt id="test_plans_endpoint.test_plans_post_single_lat_long_boundary">
 <code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_single_lat_long_boundary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_single_lat_long_boundary" title="Permalink to this definition">¶</a></dt>
 <dd><p>To Do - Test to verify we error when providing only one lat/long field boundary (ie a single point as a field)</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_step_name_validation">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_step_name_validation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_step_name_validation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that the stepname is the updated correctly</p>
 <p>return: None</p>
 </dd></dl>
 

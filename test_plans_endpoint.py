@@ -123,14 +123,14 @@ def test_plans_post_missing_is_ctf_key(env, api, auth, level):
 
 
 @pytest.mark.exception
-def test_plans_post_missing_is_headland_width_optimized_key(env, api, auth, level):
+def test_plans_post_missing_headland_width_optimized_key(env, api, auth, level):
     """
-    Test to verify we receive a 400 status if the is_headland_width_optimized data is missing
+    Test to verify we receive a 400 status if the headland_width_optimized data is missing
 
     return: None
     """
     payload = deepcopy(config.payload)
-    del payload['is_headland_width_optimized']
+    del payload['headland_width_optimized']
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
@@ -234,7 +234,7 @@ def test_plans_post_missing_constraints_ramp_down_distance_key(env, api, auth, l
     assert response.status_code == 400
 
 
-@pytest.mark.exception
+@pytest.mark.skip(reason="deprecated on July 14 2020")
 def test_plans_post_missing_field_name_key(env, api, auth, level):
     """
     Test to verify we receive a 400 status if the name data is missing
@@ -267,14 +267,30 @@ def test_plans_post_missing_field_boundary_key(env, api, auth, level):
 
 
 @pytest.mark.exception
-def test_plans_post_missing_field_boundary_lat_long_key(env, api, auth, level):
+def test_plans_post_missing_field_boundary_boundary_key(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the boundary data is missing
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    del payload['field']['boundary']['boundary']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.exception
+def test_plans_post_missing_field_boundary_boundary_lat_long_key(env, api, auth, level):
     """
     Test to verify we receive a 400 status if an empty boundary payload data is sent
 
     return: None
     """
     payload = deepcopy(config.payload)
-    payload['field']['boundary'] = []
+    payload['field']['boundary']['boundary'] = []
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
@@ -283,14 +299,14 @@ def test_plans_post_missing_field_boundary_lat_long_key(env, api, auth, level):
 
 
 @pytest.mark.exception
-def test_plans_post_missing_field_gate_key(env, api, auth, level):
+def test_plans_post_missing_field_gates_key(env, api, auth, level):
     """
-    Test to verify we receive a 400 status if the gate data is missing
+    Test to verify we receive a 400 status if the gates key is missing
 
     return: None
     """
     payload = deepcopy(config.payload)
-    del payload['field']['gate']
+    del payload['field']['gates']
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
@@ -299,14 +315,14 @@ def test_plans_post_missing_field_gate_key(env, api, auth, level):
 
 
 @pytest.mark.exception
-def test_plans_post_missing_field_gate_lat_long_key(env, api, auth, level):
+def test_plans_post_missing_field_gates_lat_long_key(env, api, auth, level):
     """
-    Test to verify we receive a 400 status if the gate data is empty
+    Test to verify we receive a 400 status if the gates data is empty
 
     return: None
     """
     payload = deepcopy(config.payload)
-    payload['field']['gate'] = []
+    payload['field']['gates'] = []
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
@@ -315,14 +331,78 @@ def test_plans_post_missing_field_gate_lat_long_key(env, api, auth, level):
 
 
 @pytest.mark.exception
-def test_plans_post_missing_field_row_direction_key(env, api, auth, level):
+def test_plans_post_missing_field_gates_point_key(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the point key is missing
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    del payload['field']['gates'][0]['point']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.exception
+def test_plans_post_missing_field_gates_point_lat_long_key(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the point data is empty
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    payload['field']['gates'][0]['point'] = []
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.exception
+def test_plans_post_missing_field_obstacles_key(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the obstacles key is missing
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    del payload['field']['obstacles']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.exception
+def test_plans_post_missing_field_obstacles_lat_long_key(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the obstacles data is empty
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    payload['field']['obstacles'] = []
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.exception
+def test_plans_post_missing_row_direction_key(env, api, auth, level):
     """
     Test to verify we receive a 400 status if the row_direction data is missing
 
     return: None
     """
     payload = deepcopy(config.payload)
-    del payload['field']['row_direction']
+    del payload['row_direction']
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
@@ -331,14 +411,30 @@ def test_plans_post_missing_field_row_direction_key(env, api, auth, level):
 
 
 @pytest.mark.exception
-def test_plans_post_missing_field_row_direction_lat_long_key(env, api, auth, level):
+def test_plans_post_missing_field_soil_type_key(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the soil type key is missing
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    del payload['field']['soil_type']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.exception
+def test_plans_post_missing_row_direction_lat_long_key(env, api, auth, level):
     """
     Test to verify we receive a 400 status if the row_direction data is empty
 
     return: None
     """
     payload = deepcopy(config.payload)
-    payload['field']['row_direction'] = []
+    payload['row_direction'] = []
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
