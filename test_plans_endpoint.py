@@ -847,6 +847,103 @@ def test_plans_get_status_response_performance(env, api, auth, level):
     logger.debug(response_time_list)
 
 
+@pytest.mark.exception
+def test_plans_gate_not_connected_to_field(env, api, auth, level):
+    """
+    Test to validate that a failure is returned when the gate is not attached to the field.
+
+    return: None
+    """
+
+    payload = deepcopy(config.payload)
+    payload['field']['gates'][0]['point']['lat'] = '-10.450962'
+    payload['field']['gates'][0]['point']['lng'] = '105.691082'
+    payload = json.dumps(payload)
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    assert response.status_code == 200
+    json_response = response.json()
+    plan_id = json_response['plan_id']
+
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    sleep_counter = 0
+    sleep_max_counter = 60
+
+    while json_response['status']['is_complete'] != True and sleep_counter <= sleep_max_counter:
+
+        sleep_counter += 1
+        sleep(1)
+
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+
+    print("\n Sleep Counter: {0}".format(sleep_counter))
+    if sleep_counter >= sleep_max_counter:
+        assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+
+    elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+        assert json_response['status']['is_complete'] is True
+        assert json_response['status']['has_error'] is True, "hasError is not TRUE\n{0}".format(json_response)
+
+    elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+        assert json_response['status']['step_name'] == "Generating a partition"
+        assert json_response['status']['is_complete'] is True
+        assert json_response['status']['has_error'] is True
+
+
+@pytest.mark.exception
+def test_plans_invalid_row_direction_combination(env, api, auth, level):
+    """
+    Test to validate that a failure is returned when the row_direction has 3 lat/lng pairs.
+
+    return: None
+    """
+
+    payload = deepcopy(config.payload)
+    payload['row_direction'].append({"lat": 0.0010183, "lng": -0.0001983})
+    payload = json.dumps(payload)
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    assert response.status_code == 200
+    json_response = response.json()
+    plan_id = json_response['plan_id']
+
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    sleep_counter = 0
+    sleep_max_counter = 60
+
+    while json_response['status']['is_complete'] != True and sleep_counter <= sleep_max_counter:
+
+        sleep_counter += 1
+        sleep(1)
+
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+
+    print("\n Sleep Counter: {0}".format(sleep_counter))
+    if sleep_counter >= sleep_max_counter:
+        assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+
+    elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+        assert json_response['status']['is_complete'] is True
+        assert json_response['status']['has_error'] is True, "hasError is not TRUE\n{0}".format(json_response)
+
+    elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+        assert json_response['status']['step_name'] == "Generating a partition"
+        assert json_response['status']['is_complete'] is True
+        assert json_response['status']['has_error'] is True
+
+
 @pytest.mark.functionality
 @pytest.mark.smoke
 def test_plans_step_name_validation(env, api, auth, level):
