@@ -381,7 +381,7 @@ def test_plans_post_missing_field_obstacles_key(env, api, auth, level):
 @pytest.mark.exception
 def test_plans_post_missing_field_obstacles_lat_long_key(env, api, auth, level):
     """
-    Test to verify we receive a 400 status if the obstacles data is empty
+    Test to verify we receive a 200 status if the obstacles data is empty
 
     return: None
     """
@@ -391,7 +391,7 @@ def test_plans_post_missing_field_obstacles_lat_long_key(env, api, auth, level):
 
     response = plans_post_payload(env, api, auth, level, payload)
 
-    assert response.status_code == 400
+    assert response.status_code == 200
 
 
 @pytest.mark.exception
@@ -470,6 +470,79 @@ def test_plans_post_response_no_payload(env, api, auth, level):
     response = plans_post_payload(env, api, auth, level, payload)
 
     assert response.status_code == 400
+
+
+@pytest.mark.exception
+def test_plans_post_lat_lng_invalid_boundary(env, api, auth, level):
+    """
+    Test to verify lat/lng values outside the ranges is handled correctly.  Ranges: Latitudes from -90 to 90 and
+    longitudes from -180 to 180.
+
+    return: None
+    """
+    row_payload = deepcopy(config.payload)
+    boundary_payload = deepcopy(config.payload)
+    gates_payload = deepcopy(config.payload)
+    obstacles_payload = deepcopy(config.payload)
+    invalid_lat_lng = [-91, 91, -181, 181]
+    random.shuffle(invalid_lat_lng)
+    json_fields = ['row_direction', 'boundary', 'gates'] # Need to add 'obstacles' into list.
+    random.shuffle(json_fields)
+    lat_or_lng = ['lat', 'lng']
+
+    while json_fields:
+        field = json_fields.pop()
+        invalid_lat_or_lng = invalid_lat_lng.pop()
+        tmp_lat_or_lng = random.choice(lat_or_lng)
+
+        if field == 'row_direction':
+            row_payload['row_direction'][0][tmp_lat_or_lng] = invalid_lat_or_lng
+            row_payload = json.dumps(row_payload)
+
+        elif field == 'boundary':
+            boundary_payload['field']['boundary']['boundary'][0][tmp_lat_or_lng] = invalid_lat_or_lng
+            boundary_payload = json.dumps(boundary_payload)
+
+        elif field == 'gates':
+            gates_payload['field']['gates'][0]['point'][tmp_lat_or_lng] = invalid_lat_or_lng
+            gates_payload = json.dumps(gates_payload)
+
+        else:
+            obstacles_payload['field']['obstacles'][0][0][tmp_lat_or_lng] = invalid_lat_or_lng
+            obstacles_payload = json.dumps(obstacles_payload)
+
+    payloads = [row_payload, boundary_payload, gates_payload, obstacles_payload]
+
+    for payload in payloads:
+        print("Payload: {0}".format(payload))
+        response = plans_post_payload(env, api, auth, level, payload)
+        assert response.status_code == 200
+        json_response = response.json()
+        plan_id = json_response['plan_id']
+
+        max_sleep_counter = 60
+        sleep_counter = 0
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+
+        while json_response['status']['is_complete'] != True and sleep_counter <= max_sleep_counter:
+            sleep_counter += 1
+            sleep(1)
+            response = plans_get_by_id(env, api, auth, level, plan_id)
+            assert response.status_code == 200
+            json_response = response.json()
+
+        if sleep_counter >= max_sleep_counter:
+            assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is True, "hasError is not TRUE\n{0}".format(json_response)
+
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+            assert json_response['status']['step_name'] == "Generating a partition"
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is True
 
 
 @pytest.mark.functionality
@@ -877,30 +950,49 @@ def test_plans_step_name_validation(env, api, auth, level):
 
     started_validated = 0
     configure_plan_validated = 0
+    generating_field_partitions_validated = 0
     exit_flag = 0
     sleep_counter = 0
+    max_sleep = 60
+    status_updated_date = None
 
-    while exit_flag == 0 and sleep_counter <= 20:
+    while exit_flag == 0 and sleep_counter <= max_sleep:
 
         if json_response['status']['step_name'] == "Started" and started_validated == 0:
             ''' This is step 1 validation'''
             assert json_response['status']['step_name'] == "Started"
-            assert json_response['updated_date'] != created_date
             assert json_response['updated_date'] == json_response['status']['updated_date']
+            status_updated_date = json_response['status']['updated_date']
             assert json_response['status']['has_error'] is False
             assert json_response['status']['is_complete'] is False
             started_validated = 1
-            print("\nStep_Started Validated")
+            print("\nStep: Started Validated")
 
         elif json_response['status']['step_name'] == "Configuring Plan" and configure_plan_validated == 0:
             ''' This is step 2 validation'''
             assert json_response['status']['step_name'] == "Configuring Plan"
             assert json_response['updated_date'] != created_date
             assert json_response['updated_date'] == json_response['status']['updated_date']
+            assert json_response['updated_date'] != status_updated_date
+            status_updated_date = json_response['status']['updated_date']
             assert json_response['status']['has_error'] is False
             assert json_response['status']['is_complete'] is False
             configure_plan_validated = 1
-            print("Step_Configuring Plan Validated")
+            print("Step: Configuring Plan Validated")
+            sleep_counter = 0
+
+        elif json_response['status']['step_name'] == "Generating a partition" and \
+                generating_field_partitions_validated == 0:
+            ''' This is step 3 validation'''
+            assert json_response['status']['step_name'] == "Generating a partition"
+            assert json_response['updated_date'] != created_date
+            assert json_response['updated_date'] == json_response['status']['updated_date']
+            assert json_response['updated_date'] != status_updated_date
+            status_updated_date = json_response['status']['updated_date']
+            assert json_response['status']['has_error'] is False
+            assert json_response['status']['is_complete'] is False
+            generating_field_partitions_validated = 1
+            print("Step: Generating a partition")
             exit_flag = 1
             sleep_counter = 0
 
@@ -909,6 +1001,8 @@ def test_plans_step_name_validation(env, api, auth, level):
 
         response = plans_get_by_id(env, api, auth, level, plan_id)
         json_response = response.json()
+
+    assert sleep_counter < 60, "Timeout Exceeded\n{0}".format(json_response)
 
 
 @pytest.mark.skip(reason="Not written - future test")
