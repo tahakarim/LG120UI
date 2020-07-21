@@ -4,7 +4,7 @@ payload = {
     "field_id": 12345,
     "is_ctf": False,
     "headland_width_optimized": False,
-    "headland_width": 18.2,
+    "headland_width": 18.1,
     "row_direction": [
         {
             "lat": 0.0012783, "lng": -0.0012783
@@ -40,11 +40,11 @@ payload = {
             ]
         },
         "obstacles": [
-         #   [
-         #       {
-         #           "lat": 0, "lng": 0
-         #       }
-         #   ]
+            # [
+            #     {
+            #         "lat": 0, "lng": 0
+            #     }
+            # ]
         ],
         "gates": [
             {
