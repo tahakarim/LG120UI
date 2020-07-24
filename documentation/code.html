@@ -172,6 +172,13 @@
 </dd></dl>
 
 <span class="target" id="module-test_plans_endpoint"></span><dl class="py function">
+<dt id="test_plans_endpoint.test_plans_gate_not_connected_to_field">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_gate_not_connected_to_field</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_gate_not_connected_to_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that a failure is returned when the gate is not attached to the field.</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="test_plans_endpoint.test_plans_get_by_id_response_validation">
 <code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_get_by_id_response_validation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_get_by_id_response_validation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test to validate that we are returning one status and that it is
@@ -264,6 +271,34 @@ the correct status</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="test_plans_endpoint.test_plans_invalid_row_direction_combination">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_invalid_row_direction_combination</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_invalid_row_direction_combination" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that a failure is returned when the row_direction has 3 lat/lng pairs.</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_field_boundary_boundary_null_island_lat_long_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_field_boundary_boundary_null_island_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_field_boundary_boundary_null_island_lat_long_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 200 status if a null island lat/long boundary payload data is sent</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_field_boundary_boundary_single_lat_long_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_field_boundary_boundary_single_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_field_boundary_boundary_single_lat_long_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 200 status if a single lat/long boundary payload data is sent</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_field_boundary_boundary_two_lat_long_key">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_field_boundary_boundary_two_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_field_boundary_boundary_two_lat_long_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify we receive a 200 status if  two lat/long boundary payload data is sent</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="test_plans_endpoint.test_plans_post_field_boundary_lat_long_DMM">
 <code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_field_boundary_lat_long_DMM</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_field_boundary_lat_long_DMM" title="Permalink to this definition">¶</a></dt>
 <dd><p>To Do - Test to verify we error when field boundary lat/long are provided in DMM format
@@ -276,6 +311,14 @@ Degrees and decimal minutes (DMM): 41 24.2028, 2 10.4418</p>
 <code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_field_boundary_lat_long_DMS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_field_boundary_lat_long_DMS" title="Permalink to this definition">¶</a></dt>
 <dd><p>To Do - Test to verify we error when field boundary lat/long are provided in DMS format
 Degrees, minutes, and seconds (DMS): 41°24’12.2”N 2°10’26.5”E</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_lat_lng_invalid_boundary">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_lat_lng_invalid_boundary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_lat_lng_invalid_boundary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to verify lat/lng values outside the ranges is handled correctly.  Ranges: Latitudes from -90 to 90 and
+longitudes from -180 to 180.</p>
 <p>return: None</p>
 </dd></dl>
 
@@ -408,7 +451,7 @@ Degrees, minutes, and seconds (DMS): 41°24’12.2”N 2°10’26.5”E</p>
 <dl class="py function">
 <dt id="test_plans_endpoint.test_plans_post_missing_field_obstacles_lat_long_key">
 <code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_missing_field_obstacles_lat_long_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_missing_field_obstacles_lat_long_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test to verify we receive a 400 status if the obstacles data is empty</p>
+<dd><p>Test to verify we receive a 200 status if the obstacles data is empty</p>
 <p>return: None</p>
 </dd></dl>
 
