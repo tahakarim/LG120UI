@@ -1096,7 +1096,6 @@ def test_plans_gate_not_connected_to_field(env, api, auth, level):
         assert response.status_code == 200
         json_response = response.json()
 
-    print("\n Sleep Counter: {0}".format(sleep_counter))
     if sleep_counter >= sleep_max_counter:
         assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
 
@@ -1144,7 +1143,6 @@ def test_plans_invalid_row_direction_combination(env, api, auth, level):
         assert response.status_code == 200
         json_response = response.json()
 
-    print("\n Sleep Counter: {0}".format(sleep_counter))
     if sleep_counter >= sleep_max_counter:
         assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
 
@@ -1167,7 +1165,16 @@ def test_plans_step_name_validation(env, api, auth, level):
     return: None
     """
     payload = deepcopy(config.payload)
+    ### Temp Code
+    #payload = json.dumps(payload)
+
+    payload['field']['boundary']['boundary'] = config.quarter_circle_field
+    payload['field']['gates'][0]['point'] = payload['field']['boundary']['boundary'][0]
+    payload['row_direction'][0] = payload['field']['boundary']['boundary'][0]
+    payload['row_direction'][1] = payload['field']['boundary']['boundary'][1]
+
     payload = json.dumps(payload)
+    ### End Temp Code
 
     response = plans_post_payload(env, api, auth, level, payload)
 
@@ -1189,12 +1196,15 @@ def test_plans_step_name_validation(env, api, auth, level):
     started_validated = 0
     configure_plan_validated = 0
     generating_field_partitions_validated = 0
-    exit_flag = 0
+    saving_partition_validated = 0
+    saved_partition_to_s3 = 0
     sleep_counter = 0
-    max_sleep = 60
+
+    # 60 seconds * number of minutes.
+    max_sleep = 60 * 10
     status_updated_date = None
 
-    while exit_flag == 0 and sleep_counter <= max_sleep:
+    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
 
         if json_response['status']['step_name'] == "Started" and started_validated == 0:
             ''' This is step 1 validation'''
@@ -1231,7 +1241,34 @@ def test_plans_step_name_validation(env, api, auth, level):
             assert json_response['status']['is_complete'] is False
             generating_field_partitions_validated = 1
             print("Step: Generating a partition")
-            exit_flag = 1
+            sleep_counter = 0
+
+        elif json_response['status']['step_name'] == "Saving partition" and \
+                saving_partition_validated == 0:
+            ''' This is step 4 validation'''
+            assert json_response['status']['step_name'] == "Saving partition"
+            assert json_response['updated_date'] != created_date
+            assert json_response['updated_date'] == json_response['status']['updated_date']
+            assert json_response['updated_date'] != status_updated_date
+            status_updated_date = json_response['status']['updated_date']
+            assert json_response['status']['has_error'] is False
+            assert json_response['status']['is_complete'] is False
+            saving_partition_validated = 1
+            print("Step: Saving partition")
+            sleep_counter = 0
+
+        elif json_response['status']['step_name'] == "Saved partition to S3" and \
+                saved_partition_to_s3 == 0:
+            ''' This is step 5 validation'''
+            assert json_response['status']['step_name'] == "Saved partition to S3"
+            assert json_response['updated_date'] != created_date
+            assert json_response['updated_date'] == json_response['status']['updated_date']
+            assert json_response['updated_date'] != status_updated_date
+            status_updated_date = json_response['status']['updated_date']
+            assert json_response['status']['has_error'] is False
+            assert json_response['status']['is_complete'] is True
+            saved_partition_to_s3 = 1
+            print("Step: Saved partition to S3")
             sleep_counter = 0
 
         sleep_counter += 1
@@ -1240,7 +1277,7 @@ def test_plans_step_name_validation(env, api, auth, level):
         response = plans_get_by_id(env, api, auth, level, plan_id)
         json_response = response.json()
 
-    assert sleep_counter < 60, "Timeout Exceeded\n{0}".format(json_response)
+    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
 
 
 @pytest.mark.skip(reason="Not written - future test")
