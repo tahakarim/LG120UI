@@ -3,6 +3,7 @@ import logging
 import pytest
 import random
 import config
+import helpers
 from plans_endpoint import plans_get, plans_get_by_id, plans_get_status, plans_post_payload
 from requests_toolbelt.utils import dump
 from statistics import median, stdev
@@ -297,6 +298,7 @@ def test_plans_post_missing_field_boundary_boundary_lat_long_key(env, api, auth,
 
     assert response.status_code == 400
 
+
 @pytest.mark.exception
 def test_plans_post_field_boundary_boundary_single_lat_long_key(env, api, auth, level):
     """
@@ -390,6 +392,7 @@ def test_plans_post_field_boundary_boundary_two_lat_long_key(env, api, auth, lev
             assert json_response['status']['is_complete'] is True
             assert json_response['status']['has_error'] is True
 
+
 @pytest.mark.exception
 def test_plans_post_field_boundary_boundary_null_island_lat_long_key(env, api, auth, level):
     """
@@ -438,6 +441,7 @@ def test_plans_post_field_boundary_boundary_null_island_lat_long_key(env, api, a
             ## Need to Write ---> Add assert to validate failed in the correct step
             assert json_response['status']['is_complete'] is True
             assert json_response['status']['has_error'] is True
+
 
 @pytest.mark.exception
 def test_plans_post_missing_field_gates_key(env, api, auth, level):
@@ -627,7 +631,7 @@ def test_plans_post_lat_lng_invalid_boundary(env, api, auth, level):
     obstacles_payload = deepcopy(config.payload)
     invalid_lat_lng = [-91, 91, -181, 181]
     random.shuffle(invalid_lat_lng)
-    json_fields = ['row_direction', 'boundary', 'gates'] # Need to add 'obstacles' into list.
+    json_fields = ['row_direction', 'boundary', 'gates']  # Need to add 'obstacles' into list.
     random.shuffle(json_fields)
     lat_or_lng = ['lat', 'lng']
 
@@ -1088,7 +1092,6 @@ def test_plans_gate_not_connected_to_field(env, api, auth, level):
     sleep_max_counter = 60
 
     while json_response['status']['is_complete'] != True and sleep_counter <= sleep_max_counter:
-
         sleep_counter += 1
         sleep(1)
 
@@ -1135,7 +1138,6 @@ def test_plans_invalid_row_direction_combination(env, api, auth, level):
     sleep_max_counter = 60
 
     while json_response['status']['is_complete'] != True and sleep_counter <= sleep_max_counter:
-
         sleep_counter += 1
         sleep(1)
 
@@ -1166,7 +1168,7 @@ def test_plans_step_name_validation(env, api, auth, level):
     """
     payload = deepcopy(config.payload)
     ### Temp Code
-    #payload = json.dumps(payload)
+    # payload = json.dumps(payload)
 
     payload['field']['boundary']['boundary'] = config.quarter_circle_field
     payload['field']['gates'][0]['point'] = payload['field']['boundary']['boundary'][0]
@@ -1201,7 +1203,7 @@ def test_plans_step_name_validation(env, api, auth, level):
     sleep_counter = 0
 
     # 60 seconds * number of minutes.
-    max_sleep = 60 * 10
+    max_sleep = 60 * 2
     status_updated_date = None
 
     while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
@@ -1277,6 +1279,57 @@ def test_plans_step_name_validation(env, api, auth, level):
         response = plans_get_by_id(env, api, auth, level, plan_id)
         json_response = response.json()
 
+    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
+
+
+@pytest.mark.functionality
+def test_plans_post_large_field(env, api, auth, level):
+    """
+      Test to validate that the large field created correctly
+
+      return: None
+      """
+    payload = deepcopy(config.payload)
+
+    payload['field']['boundary']['boundary'] = config.indiana
+    payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
+                                                                       payload['field']['boundary']['boundary'][2])
+
+    payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
+                                                                   payload['field']['boundary']['boundary'][2])
+    payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
+                                                                   payload['field']['boundary']['boundary'][3])
+
+    payload = json.dumps(payload)
+
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    # 60 seconds * number of minutes.
+    max_sleep = 60 * 2
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+        sleep_counter += 1
+
+    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+    assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
     assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
 
 
