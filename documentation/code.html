@@ -315,6 +315,15 @@ Degrees, minutes, and seconds (DMS): 41°24’12.2”N 2°10’26.5”E</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="test_plans_endpoint.test_plans_post_large_field">
+<code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_large_field</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_large_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test to validate that the large field created correctly
+This test case will also verify that an error message is returned when timed out.  Until this field
+passes.</p>
+<p>return: None</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="test_plans_endpoint.test_plans_post_lat_lng_invalid_boundary">
 <code class="sig-prename descclassname">test_plans_endpoint.</code><code class="sig-name descname">test_plans_post_lat_lng_invalid_boundary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">api</span></em>, <em class="sig-param"><span class="n">auth</span></em>, <em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#test_plans_endpoint.test_plans_post_lat_lng_invalid_boundary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test to verify lat/lng values outside the ranges is handled correctly.  Ranges: Latitudes from -90 to 90 and
