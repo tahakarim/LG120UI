@@ -657,7 +657,8 @@ def test_plans_post_lat_lng_invalid_boundary(env, api, auth, level):
             obstacles_payload['field']['obstacles'][0][0][tmp_lat_or_lng] = invalid_lat_or_lng
             obstacles_payload = json.dumps(obstacles_payload)
 
-    payloads = [row_payload, boundary_payload, gates_payload, obstacles_payload]
+    # need to add obstacles when implemented
+    payloads = [row_payload, boundary_payload, gates_payload]
 
     for payload in payloads:
         print("Payload: {0}".format(payload))
@@ -666,7 +667,7 @@ def test_plans_post_lat_lng_invalid_boundary(env, api, auth, level):
         json_response = response.json()
         plan_id = json_response['plan_id']
 
-        max_sleep_counter = 60
+        max_sleep_counter = (60 * 2) + 5
         sleep_counter = 0
         response = plans_get_by_id(env, api, auth, level, plan_id)
         json_response = response.json()
@@ -689,6 +690,10 @@ def test_plans_post_lat_lng_invalid_boundary(env, api, auth, level):
             assert json_response['status']['step_name'] == "Generating a partition"
             assert json_response['status']['is_complete'] is True
             assert json_response['status']['has_error'] is True
+            assert json_response['status']['message'] == "An error has occurred in the workflow while generating a " \
+                                                         "route for the requested field. The workflow has been " \
+                                                         "updated accordingly and the process terminated", \
+                                                         "Response: \n{0}".format(json_response)
 
 
 @pytest.mark.functionality
@@ -1304,7 +1309,7 @@ def test_plans_step_name_validation(env, api, auth, level, short):
 
     ## Sleep for 10 minutes and 5 seconds to ensure s3 URL is dead.
     if short is False:
-        sleep((60*10)+5)
+        sleep((60 * 10) + 5)
         s3_url_data = requests.get(json_response['s3_presigned_url'])
         assert s3_url_data.status_code == 403
 
@@ -1357,8 +1362,67 @@ def test_plans_post_large_field(env, api, auth, level):
         sleep_counter += 1
 
     # Removing these validations until this field passes
-    #assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
-    #assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+    # assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    # assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+
+    assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
+
+    if json_response['status']['has_error'] is True:
+        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+                                                     "for the requested field. The workflow has been updated " \
+                                                     ".accordingly and the process " \
+                                                     "terminated", "Response: \n{0}".format(json_response)
+
+    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
+
+
+@pytest.mark.functionality
+def test_plans_post_quarter_circle_field(env, api, auth, level):
+    """
+      Test to validate that the quarter circle field created correctly
+
+      return: None
+      """
+    payload = deepcopy(config.payload)
+
+    payload['field']['boundary']['boundary'] = config.quarter_circle_field
+
+    payload['field']['gates'][0]['point'] = random.choice(config.quarter_circle_field)
+
+    payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.399534},
+                                                                   {'lat': 37.794469, 'lng': -97.403632})
+    payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.403632},
+                                                                   {'lat': 37.794469, 'lng': -97.399534})
+
+    payload = json.dumps(payload)
+
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    # 60 seconds * number of minutes.
+    max_sleep = (60 * 2) + 30
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+        sleep_counter += 1
+
+    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
 
     assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
 
