@@ -17,6 +17,7 @@ def pytest_addoption(parser):
                      choices=['aaa', 'aaat'])
     parser.addoption("--level", action="store", default='INFO', dest="level",
                      choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'])
+    parser.addoption("--short", action="store_true", default=False, dest="short")
 
 
 @fixture()
@@ -37,3 +38,8 @@ def auth(request):
 @fixture()
 def level(request):
     return request.config.getoption("--level")
+
+
+@fixture()
+def short(request):
+    return request.config.getoption("--short")

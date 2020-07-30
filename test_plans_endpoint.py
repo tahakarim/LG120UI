@@ -1166,7 +1166,7 @@ def test_plans_invalid_row_direction_combination(env, api, auth, level):
 
 @pytest.mark.functionality
 @pytest.mark.smoke
-def test_plans_step_name_validation(env, api, auth, level):
+def test_plans_step_name_validation(env, api, auth, level, short):
     """
     Test to validate that the stepname is the updated correctly
 
@@ -1222,7 +1222,7 @@ def test_plans_step_name_validation(env, api, auth, level):
             status_updated_date = json_response['status']['updated_date']
             assert json_response['status']['has_error'] is False
             assert json_response['status']['is_complete'] is False
-            assert json_response['s3_presigned_url'] == "In Progress"
+            assert 's3_presigned_url' not in json_response, "Response: \n{0}".format(json_response)
             started_validated = 1
             print("\nStep: Started Validated")
 
@@ -1235,7 +1235,7 @@ def test_plans_step_name_validation(env, api, auth, level):
             status_updated_date = json_response['status']['updated_date']
             assert json_response['status']['has_error'] is False
             assert json_response['status']['is_complete'] is False
-            assert json_response['s3_presigned_url'] == "In Progress"
+            assert 's3_presigned_url' not in json_response, "Response: \n{0}".format(json_response)
             configure_plan_validated = 1
             print("Step: Configuring Plan Validated")
             sleep_counter = 0
@@ -1250,7 +1250,7 @@ def test_plans_step_name_validation(env, api, auth, level):
             status_updated_date = json_response['status']['updated_date']
             assert json_response['status']['has_error'] is False
             assert json_response['status']['is_complete'] is False
-            assert json_response['s3_presigned_url'] == "In Progress"
+            assert 's3_presigned_url' not in json_response, "Response: \n{0}".format(json_response)
             generating_field_partitions_validated = 1
             print("Step: Generating a partition")
             sleep_counter = 0
@@ -1265,7 +1265,7 @@ def test_plans_step_name_validation(env, api, auth, level):
             status_updated_date = json_response['status']['updated_date']
             assert json_response['status']['has_error'] is False
             assert json_response['status']['is_complete'] is False
-            assert json_response['s3_presigned_url'] == "In Progress"
+            assert 's3_presigned_url' not in json_response, "Response: \n{0}".format(json_response)
             saving_partition_validated = 1
             print("Step: Saving partition")
             sleep_counter = 0
@@ -1279,7 +1279,7 @@ def test_plans_step_name_validation(env, api, auth, level):
             status_updated_date = json_response['status']['updated_date']
             assert json_response['status']['has_error'] is False
             assert json_response['status']['is_complete'] is True
-            assert json_response['s3_presigned_url'] != "In Progress"
+            assert json_response['s3_presigned_url'] is not None
 
             ## Verify the signed URL
             s3_url_data = requests.get(json_response['s3_presigned_url'])
@@ -1303,9 +1303,10 @@ def test_plans_step_name_validation(env, api, auth, level):
     assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
 
     ## Sleep for 10 minutes and 5 seconds to ensure s3 URL is dead.
-    sleep((60*10)+5)
-    s3_url_data = requests.get(json_response['s3_presigned_url'])
-    assert s3_url_data.status_code == 403
+    if short is False:
+        sleep((60*10)+5)
+        s3_url_data = requests.get(json_response['s3_presigned_url'])
+        assert s3_url_data.status_code == 403
 
 
 @pytest.mark.functionality
