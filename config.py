@@ -120,6 +120,22 @@ indiana = [
         ]
 
 
+three_hundred_acre_field = [
+    {
+        "lat": 37.764075, "lng": -97.644557
+    },
+    {
+        "lat": 37.764075, "lng": -97.653539
+    },
+    {
+        "lat": 37.749731, "lng": -97.653539
+    },
+    {
+        "lat": 37.749731, "lng": -97.644557
+    }
+]
+
+
 half_circle_field = {
     "field": {
         "boundary": {
