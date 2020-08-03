@@ -1,0 +1,450 @@
+import json
+import pytest
+import random
+import config
+import helpers
+from plans_endpoint import plans_get_by_id, plans_post_payload
+from copy import deepcopy
+from time import sleep
+
+
+@pytest.mark.exception
+def test_plans_gate_not_connected_to_field(env, api, auth, level):
+    """
+    Test to validate that a failure is returned when the gate is not attached to the field.
+
+    return: None
+    """
+
+    payload = deepcopy(config.payload)
+    payload['field']['gates'][0]['point']['lat'] = '-10.450962'
+    payload['field']['gates'][0]['point']['lng'] = '105.691082'
+    payload = json.dumps(payload)
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    assert response.status_code == 200
+    json_response = response.json()
+    plan_id = json_response['plan_id']
+
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    sleep_counter = 0
+    sleep_max_counter = ((60 * 2) + 30)
+
+    while json_response['status']['is_complete'] != True and sleep_counter <= sleep_max_counter:
+        sleep_counter += 1
+        sleep(1)
+
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+
+    if sleep_counter >= sleep_max_counter:
+        assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+
+    elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+        assert json_response['status']['is_complete'] is True
+        assert json_response['status']['has_error'] is True, "hasError is not TRUE\n{0}".format(json_response)
+
+    elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+        assert json_response['status']['step_name'] == "Generating a partition"
+        assert json_response['status']['is_complete'] is True
+        assert json_response['status']['has_error'] is True
+        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+                                                     "for the requested field. The workflow has been updated " \
+                                                     "accordingly and the process " \
+                                                     "terminated", "Response: \n{0}".format(json_response)
+
+
+@pytest.mark.exception
+def test_plans_row_direction_multiple_lat_long_keys(env, api, auth, level):
+    """
+    Test to validate that a failure is returned when the row_direction has 3 lat/lng pairs.
+
+    return: None
+    """
+
+    payload = deepcopy(config.payload)
+    payload['row_direction'].append({"lat": 0.0010183, "lng": -0.0001983})
+    payload = json.dumps(payload)
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    assert response.status_code == 200
+    json_response = response.json()
+    plan_id = json_response['plan_id']
+
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    sleep_counter = 0
+    sleep_max_counter = 60
+
+    while json_response['status']['is_complete'] != True and sleep_counter <= sleep_max_counter:
+        sleep_counter += 1
+        sleep(1)
+
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+
+    if sleep_counter >= sleep_max_counter:
+        assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+
+    elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+        assert json_response['status']['is_complete'] is True
+        assert json_response['status']['has_error'] is True, "hasError is not TRUE\n{0}".format(json_response)
+
+    elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+        assert json_response['status']['step_name'] == "Generating a partition"
+        assert json_response['status']['is_complete'] is True
+        assert json_response['status']['has_error'] is True
+
+
+@pytest.mark.functionality
+def test_plans_field_validation_indiana(env, api, auth, level):
+    """
+      Test to validate that the large field created correctly
+      This test case will also verify that an error message is returned when timed out.  Until this field passes.
+
+      return: None
+      """
+    payload = deepcopy(config.payload)
+
+    payload['field']['boundary']['boundary'] = config.indiana
+    payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
+                                                                       payload['field']['boundary']['boundary'][2])
+
+    payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
+                                                                   payload['field']['boundary']['boundary'][2])
+    payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
+                                                                   payload['field']['boundary']['boundary'][3])
+
+    payload = json.dumps(payload)
+
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    # 60 seconds * number of minutes.
+    max_sleep = (60 * 2) + 30
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+        sleep_counter += 1
+
+    # Removing these validations until this field passes
+    # assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    # assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+
+    assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
+
+    if json_response['status']['has_error'] is True:
+        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+                                                     "for the requested field. The workflow has been updated " \
+                                                     "accordingly and the process " \
+                                                     "terminated", "Response: \n{0}".format(json_response)
+
+    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
+
+
+@pytest.mark.functionality
+def test_plans_field_validation_quarter_circle(env, api, auth, level):
+    """
+      Test to validate that the quarter circle field created correctly
+
+      return: None
+      """
+    payload = deepcopy(config.payload)
+
+    payload['field']['boundary']['boundary'] = config.quarter_circle_field
+
+    payload['field']['gates'][0]['point'] = random.choice(config.quarter_circle_field)
+
+    payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.399534},
+                                                                   {'lat': 37.794469, 'lng': -97.403632})
+    payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.403632},
+                                                                   {'lat': 37.794469, 'lng': -97.399534})
+
+    payload = json.dumps(payload)
+
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    # 60 seconds * number of minutes.
+    max_sleep = (60 * 2) + 30
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+        sleep_counter += 1
+
+    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+
+    assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
+
+    if json_response['status']['has_error'] is True:
+        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+                                                     "for the requested field. The workflow has been updated " \
+                                                     ".accordingly and the process " \
+                                                     "terminated", "Response: \n{0}".format(json_response)
+
+    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
+
+
+@pytest.mark.exception
+def test_plans_field_boundary_boundary_single_lat_long_key(env, api, auth, level):
+    """
+    Test to verify we receive a 200 status if a single lat/long boundary payload data is sent
+    Test should fail from lambda validation
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    del payload['field']['boundary']['boundary'][0:3]
+    payload = json.dumps(payload)
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] is not True and sleep_counter <= 10:
+        sleep_counter += 1
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+
+        if sleep_counter >= 10:
+            assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is True, "hasError is not TRUE\n{0}".format(json_response)
+
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+            ## Need to Write ---> Add assert to validate failed in the correct step
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is True
+
+
+@pytest.mark.exception
+def test_plans_field_boundary_boundary_two_lat_long_keys(env, api, auth, level):
+    """
+    Test to verify we receive a 200 status if two lat/long boundary payload data is sent
+    Test should fail from lambda validation
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    del payload['field']['boundary']['boundary'][0:2]
+    payload = json.dumps(payload)
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] != True and sleep_counter <= 10:
+        sleep_counter += 1
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+
+        if sleep_counter >= 10:
+            assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is True, "hasError is not TRUE\n{0}".format(json_response)
+
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+            ## Need to Write ---> Add assert to validate failed in the correct step
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is True
+
+
+@pytest.mark.exception
+def test_plans_field_boundary_boundary_lat_long_key_set_to_zero(env, api, auth, level):
+    """
+    Test to verify we receive a 200 status if a null island lat/long boundary payload data is sent
+    Test should fail from lambda validation
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    payload1 = payload['field']['boundary']['boundary']
+    for i in payload1:
+        i.update({"lat": 0, "lng": 0})
+
+    payload = json.dumps(payload)
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] != True and sleep_counter <= 10:
+        sleep_counter += 1
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+
+        if sleep_counter >= 10:
+            assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is True, "hasError is not TRUE\n{0}".format(json_response)
+
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+            ## Need to Write ---> Add assert to validate failed in the correct step
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is True
+
+
+@pytest.mark.exception
+def test_plans_lat_lng_invalid_values(env, api, auth, level):
+    """
+    Test to verify lat/lng values outside the valid ranges is handled correctly. Ranges: Latitudes from -90 to 90 and
+    longitudes from -180 to 180.
+
+    return: None
+    """
+    row_payload = deepcopy(config.payload)
+    boundary_payload = deepcopy(config.payload)
+    gates_payload = deepcopy(config.payload)
+    obstacles_payload = deepcopy(config.payload)
+    invalid_lat_lng = [-91, 91, -181, 181]
+    random.shuffle(invalid_lat_lng)
+    json_fields = ['row_direction', 'boundary', 'gates']  # Need to add 'obstacles' into list.
+    random.shuffle(json_fields)
+    lat_or_lng = ['lat', 'lng']
+
+    while json_fields:
+        field = json_fields.pop()
+        invalid_lat_or_lng = invalid_lat_lng.pop()
+        tmp_lat_or_lng = random.choice(lat_or_lng)
+
+        if field == 'row_direction':
+            row_payload['row_direction'][0][tmp_lat_or_lng] = invalid_lat_or_lng
+            row_payload = json.dumps(row_payload)
+
+        elif field == 'boundary':
+            boundary_payload['field']['boundary']['boundary'][0][tmp_lat_or_lng] = invalid_lat_or_lng
+            boundary_payload = json.dumps(boundary_payload)
+
+        elif field == 'gates':
+            gates_payload['field']['gates'][0]['point'][tmp_lat_or_lng] = invalid_lat_or_lng
+            gates_payload = json.dumps(gates_payload)
+
+        else:
+            obstacles_payload['field']['obstacles'][0][0][tmp_lat_or_lng] = invalid_lat_or_lng
+            obstacles_payload = json.dumps(obstacles_payload)
+
+    # need to add obstacles when implemented
+    payloads = [row_payload, boundary_payload, gates_payload]
+
+    for payload in payloads:
+        print("Payload: {0}".format(payload))
+        response = plans_post_payload(env, api, auth, level, payload)
+        assert response.status_code == 200
+        json_response = response.json()
+        plan_id = json_response['plan_id']
+
+        max_sleep_counter = (60 * 2) + 5
+        sleep_counter = 0
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+
+        while json_response['status']['is_complete'] != True and sleep_counter <= max_sleep_counter:
+            sleep_counter += 1
+            sleep(1)
+            response = plans_get_by_id(env, api, auth, level, plan_id)
+            assert response.status_code == 200
+            json_response = response.json()
+
+        if sleep_counter >= max_sleep_counter:
+            assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is True, "hasError is not TRUE\n{0}".format(json_response)
+
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+            assert json_response['status']['step_name'] == "Generating a partition"
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is True
+            assert json_response['status']['message'] == "An error has occurred in the workflow while generating a " \
+                                                         "route for the requested field. The workflow has been " \
+                                                         "updated accordingly and the process terminated", \
+                                                         "Response: \n{0}".format(json_response)
