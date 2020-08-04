@@ -448,3 +448,185 @@ def test_plans_lat_lng_invalid_values(env, api, auth, level):
                                                          "route for the requested field. The workflow has been " \
                                                          "updated accordingly and the process terminated", \
                                                          "Response: \n{0}".format(json_response)
+
+
+@pytest.mark.functionality
+def test_plans_field_validation_half_circle(env, api, auth, level):
+    """
+      Test to validate that the half circle field created correctly
+
+      return: None
+      """
+    payload = deepcopy(config.payload)
+
+    payload['field']['boundary']['boundary'] = config.half_circle_field
+
+    payload['field']['gates'][0]['point'] = random.choice(config.half_circle_field)
+
+    payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.818026, 'lng': -97.404255},
+                                                                   {'lat': 37.818026, 'lng': -97.399223})
+    payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.820864, 'lng': -97.399223},
+                                                                   {'lat': 37.820864, 'lng': -97.404255})
+
+    payload = json.dumps(payload)
+
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    # 60 seconds * number of minutes.
+    max_sleep = (60 * 2) + 30
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+        sleep_counter += 1
+
+    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+
+    assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
+
+    if json_response['status']['has_error'] is True:
+        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+                                                     "for the requested field. The workflow has been updated " \
+                                                     "accordingly and the process " \
+                                                     "terminated", "Response: \n{0}".format(json_response)
+
+    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
+
+
+@pytest.mark.functionality
+def test_plans_field_validation_full_circle(env, api, auth, level):
+    """
+      Test to validate that the half circle field created correctly
+
+      return: None
+      """
+    payload = deepcopy(config.payload)
+
+    payload['field']['boundary']['boundary'] = config.circle_feild
+
+    payload['field']['gates'][0]['point'] = random.choice(config.circle_feild)
+
+    payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 34.964350, 'lng': -114.655483},
+                                                                   {'lat': 34.964350, 'lng': -114.654096})
+    payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 34.962717, 'lng': -114.654096},
+                                                                   {'lat': 34.962717, 'lng': -114.655483})
+
+    payload = json.dumps(payload)
+
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    # 60 seconds * number of minutes.
+    max_sleep = (60 * 2) + 30
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+        sleep_counter += 1
+
+    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+
+    assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
+
+    if json_response['status']['has_error'] is True:
+        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+                                                     "for the requested field. The workflow has been updated " \
+                                                     "accordingly and the process " \
+                                                     "terminated", "Response: \n{0}".format(json_response)
+
+    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
+
+
+@pytest.mark.functionality
+def test_plans_field_validation_marktoberdorf(env, api, auth, level):
+    """
+      Test to validate that the half circle field created correctly
+
+      return: None
+      """
+    payload = deepcopy(config.payload)
+
+    payload['field']['boundary']['boundary'] = config.marktoberdorf_test_field
+
+    payload['field']['gates'][0]['point']['lat'] = '47.783987'
+    payload['field']['gates'][0]['point']['lng'] = '10.606438'
+
+    payload['row_direction'] = [
+        {
+            "lat": 47.784394, "lng": 10.607035
+        },
+        {
+            "lat": 47.783987, "lng": 10.606438
+        }
+    ]
+
+    payload = json.dumps(payload)
+
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 200
+
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    # 60 seconds * number of minutes.
+    max_sleep = (60 * 2) + 30
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+        sleep_counter += 1
+
+    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+
+    assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
+
+    if json_response['status']['has_error'] is True:
+        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+                                                     "for the requested field. The workflow has been updated " \
+                                                     "accordingly and the process " \
+                                                     "terminated", "Response: \n{0}".format(json_response)
+
+    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
