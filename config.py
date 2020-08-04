@@ -136,10 +136,8 @@ three_hundred_acre_field = [
 ]
 
 
-half_circle_field = {
-    "field": {
-        "boundary": {
-            "boundary": [
+half_circle_field = [
+
                 {
                     "lat": 37.818022, "lng": -97.406111
                 },
@@ -234,14 +232,10 @@ half_circle_field = {
                     "lat": 37.818026, "lng": -97.397474
                 }
             ]
-        }
-    }
-}
 
-circle_feild = {
-    "field": {
-        "boundary": {
-            "boundary": [
+
+circle_feild = [
+
                 {
                     "lat": 34.962566, "lng": -114.654732
                 },
@@ -378,17 +372,11 @@ circle_feild = {
                     "lat": 34.962600, "lng": -114.654557
                 }
             ]
-        }
-    }
-
-}
 
 
 
-marktoberdorf_test_field = {
-    "field": {
-        "boundary": {
-            "boundary": [
+marktoberdorf_test_field = [
+
                 {
                     "lat": 47.783837, "lng": 10.606796
                 },
@@ -400,9 +388,6 @@ marktoberdorf_test_field = {
                 },
                 {
                     "lat": 47.784333, "lng": 10.605672
-                },
-                {
-                    "lat": 47.748494, "lng": 10.605574
                 },
                 {
                     "lat": 47.784663, "lng": 10.605639
@@ -441,6 +426,3 @@ marktoberdorf_test_field = {
                     "lat": 47.783769, "lng": 10.607046
                 }
             ]
-        }
-    }
-}
