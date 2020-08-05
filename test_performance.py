@@ -161,6 +161,42 @@ def test_plans_post_performance(env, api, auth, level):
 
       return: None
     """
+    setup_plan_id = []
+    for i in range(5):
+        payload = deepcopy(config.payload)
+        payload['field']['boundary']['boundary'] = config.three_hundred_acre_field
+        payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
+                                                                           payload['field']['boundary']['boundary'][2])
+        payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
+                                                                       payload['field']['boundary']['boundary'][2])
+        payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
+                                                                       payload['field']['boundary']['boundary'][3])
+
+        payload = json.dumps(payload)
+        response = plans_post_payload(env, api, auth, level, payload)
+        assert response.status_code == 200
+        json_response = response.json()
+
+        plan_id = json_response['plan_id']
+        setup_plan_id.append(plan_id)
+        sleep(30)
+
+    for plan_id in setup_plan_id:
+
+        # Check to see if finished
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+        print("Processing Setup ID: {0}".format(plan_id))
+
+        while json_response['status']['is_complete'] is False:
+            sleep(1)
+            response = plans_get_by_id(env, api, auth, level, plan_id)
+            assert response.status_code == 200
+            json_response = response.json()
+
+    print("Starting Test")
+
     payload = deepcopy(config.payload)
     payload['field']['boundary']['boundary'] = config.three_hundred_acre_field
     payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
@@ -219,6 +255,7 @@ def test_plans_post_performance(env, api, auth, level):
 
     list_of_time_delta = []
     list_of_failed_id = []
+    output_data = []
 
     # Getting each of the responses, validating fields match and storing off the delta time.
     for plan_id in list_of_plan_id:
@@ -253,6 +290,7 @@ def test_plans_post_performance(env, api, auth, level):
 
         list_of_time_delta.append(delta_milliseconds)
 
+        output_data.append((plan_id, json_response['created_date'], json_response['updated_date'], delta_milliseconds))
         print("Seconds Delta Time: {0}".format(delta_milliseconds))
 
     # Process the data
@@ -274,3 +312,5 @@ def test_plans_post_performance(env, api, auth, level):
             counter += 1
 
     print("Delta Greater Than Base: {0}".format(counter))
+    for i in output_data:
+        print("{0}, {1}, {2}, {3}".format(i[0], i[1], i[2], i[3]))
