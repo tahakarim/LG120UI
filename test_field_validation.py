@@ -124,6 +124,7 @@ def test_plans_field_validation_indiana(env, api, auth, level):
     payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
                                                                    payload['field']['boundary']['boundary'][3])
 
+    payload['field']['soil_type'] = helpers.helper_random_soiltype()
     payload = json.dumps(payload)
 
     print("\nPayload: {0}".format(payload))
@@ -164,6 +165,7 @@ def test_plans_field_validation_indiana(env, api, auth, level):
                                                      "terminated", "Response: \n{0}".format(json_response)
 
     assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
+    assert json_response['status']['has_error'] is False
 
 
 @pytest.mark.functionality
@@ -183,6 +185,7 @@ def test_plans_field_validation_quarter_circle(env, api, auth, level):
                                                                    {'lat': 37.794469, 'lng': -97.403632})
     payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.403632},
                                                                    {'lat': 37.794469, 'lng': -97.399534})
+    payload['field']['soil_type'] = helpers.helper_random_soiltype()
 
     payload = json.dumps(payload)
 
@@ -467,7 +470,7 @@ def test_plans_field_validation_half_circle(env, api, auth, level):
                                                                    {'lat': 37.818026, 'lng': -97.399223})
     payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.820864, 'lng': -97.399223},
                                                                    {'lat': 37.820864, 'lng': -97.404255})
-
+    payload['field']['soil_type'] = helpers.helper_random_soiltype()
     payload = json.dumps(payload)
 
     print("\nPayload: {0}".format(payload))
@@ -526,7 +529,7 @@ def test_plans_field_validation_full_circle(env, api, auth, level):
                                                                    {'lat': 34.964350, 'lng': -114.654096})
     payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 34.962717, 'lng': -114.654096},
                                                                    {'lat': 34.962717, 'lng': -114.655483})
-
+    payload['field']['soil_type'] = helpers.helper_random_soiltype()
     payload = json.dumps(payload)
 
     print("\nPayload: {0}".format(payload))
@@ -647,6 +650,7 @@ def test_plans_field_validation_millennium_park(env, api, auth, level):
                                                                    {'lat': 41.874713, 'lng': -87.617830})
     payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 41.876914, 'lng': -87.617892},
                                                                    {'lat': 41.874685, 'lng': -87.620076})
+    payload['field']['soil_type'] = helpers.helper_random_soiltype()
 
     payload = json.dumps(payload)
 
@@ -687,3 +691,120 @@ def test_plans_field_validation_millennium_park(env, api, auth, level):
                                                      "terminated", "Response: \n{0}".format(json_response)
 
     assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
+
+
+@pytest.mark.functionality
+def test_plans_field_validation_boundary_out_of_order_square(env, api, auth, level):
+    """
+      Test to validate when you present a square field with the boundaries in 1, 3, 2, 4 order.
+
+      return: None
+      """
+    payload = deepcopy(config.payload)
+
+    payload = deepcopy(config.payload)
+    payload['field']['boundary']['boundary'] = config.three_hundred_acre_field
+
+    temp_point_two = payload['field']['boundary']['boundary'][1]
+    payload['field']['boundary']['boundary'][1] = payload['field']['boundary']['boundary'][2]
+    payload['field']['boundary']['boundary'][2] = temp_point_two
+
+    payload['field']['gates'][0]['point'] = random.choice(config.three_hundred_acre_field)
+
+    payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
+                                                                   payload['field']['boundary']['boundary'][2])
+    payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
+                                                                   payload['field']['boundary']['boundary'][3])
+
+    payload = json.dumps(payload)
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    # 60 seconds * number of minutes.
+    max_sleep = (60 * 2) + 30
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+        sleep_counter += 1
+
+    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+
+    assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
+
+    if json_response['status']['has_error'] is True:
+        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+                                                     "for the requested field. The workflow has been updated " \
+                                                     "accordingly and the process " \
+                                                     "terminated", "Response: \n{0}".format(json_response)
+
+    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
+
+@pytest.mark.functionality
+def test_plans_field_validation_boundary_out_of_order_circle(env, api, auth, level):
+    """
+      Test to validate when you present a circle field with the boundaries shuffled.
+
+      return: None
+      """
+    payload = deepcopy(config.payload)
+
+    circle_field = deepcopy(config.circle_feild)
+    random.shuffle(circle_field)
+    payload['field']['boundary']['boundary'] = circle_field
+
+    payload['field']['gates'][0]['point'] = random.choice(config.circle_feild)
+    payload['row_direction'][0] = random.choice(config.circle_feild)
+    payload['row_direction'][1] = random.choice(config.circle_feild)
+
+    payload = json.dumps(payload)
+
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    # 60 seconds * number of minutes.
+    max_sleep = (60 * 2) + 30
+    sleep_counter = 0
+
+    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        json_response = response.json()
+        sleep_counter += 1
+
+    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+
+    assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
+
+    if json_response['status']['has_error'] is True:
+        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+                                                     "for the requested field. The workflow has been updated " \
+                                                     "accordingly and the process " \
+                                                     "terminated", "Response: \n{0}".format(json_response)
+
+    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
+

@@ -2,6 +2,7 @@ import json
 import pytest
 import random
 import config
+import helpers
 from plans_endpoint import plans_get_by_id, plans_post_payload
 from copy import deepcopy
 from time import sleep
@@ -462,6 +463,71 @@ def test_plans_post_payload_empty(env, api, auth, level):
     return: None
     """
     payload = '{}'
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.exception
+def test_plans_post_field_boundary_in_dms_format(env, api, auth, level):
+    """
+    Test to ensure an error is returned when sending lat/lng's in DMS format (37°45'50.7 N).
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    payload['field']['boundary']['boundary'] = deepcopy(config.three_hundred_acre_field)
+
+    payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
+                                                                       payload['field']['boundary']['boundary'][2])
+    payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
+                                                                   payload['field']['boundary']['boundary'][2])
+    payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
+                                                                   payload['field']['boundary']['boundary'][3])
+
+    payload['field']['boundary']['boundary'][0]['lat'] = "37°45'50.7 N"
+    payload['field']['boundary']['boundary'][0]['lng'] = "97°38'40.4 W"
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.exception
+def test_plans_post_field_boundary_in_dmm_format(env, api, auth, level):
+    """
+    Test to ensure an error is returned when sending lat/lng's in DMM format (37°45.8445 N).
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    payload['field']['boundary']['boundary'] = deepcopy(config.three_hundred_acre_field)
+
+    payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
+                                                                       payload['field']['boundary']['boundary'][2])
+    payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
+                                                                   payload['field']['boundary']['boundary'][2])
+    payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
+                                                                   payload['field']['boundary']['boundary'][3])
+
+    payload['field']['boundary']['boundary'][0]['lat'] = "37°45.8445 N"
+    payload['field']['boundary']['boundary'][0]['lng'] = "97°38.6734 W"
+
+    response = plans_post_payload(env, api, auth, level, payload)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.exception
+def test_plans_post_field_soil_type_invalid_choice(env, api, auth, level):
+    """
+    Test to ensure an error is returned when sending a field soil_type that is invalid
+
+    return: None
+    """
+    payload = deepcopy(config.payload)
+    payload['field']['soil_type'] = "ocean_salt_water"
 
     response = plans_post_payload(env, api, auth, level, payload)
 
