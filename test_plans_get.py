@@ -2,7 +2,7 @@ import json
 import logging
 import pytest
 import random
-import config
+import params
 import requests
 from plans_endpoint import plans_get, plans_get_by_id, plans_get_status, plans_post_payload
 from copy import deepcopy
@@ -248,11 +248,11 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     ### Temp Code
     # payload = json.dumps(payload)
 
-    payload['field']['boundary']['boundary'] = config.quarter_circle_field
+    payload['field']['boundary']['boundary'] = params.quarter_circle_field
     payload['field']['gates'][0]['point'] = payload['field']['boundary']['boundary'][0]
     payload['row_direction'][0] = payload['field']['boundary']['boundary'][0]
     payload['row_direction'][1] = payload['field']['boundary']['boundary'][1]
@@ -276,20 +276,21 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
 
     assert json_response['plan_id'] == plan_id
     assert json_response['created_date'] == created_date
-    print(plan_id)
 
     started_validated = 0
     configure_plan_validated = 0
     generating_field_partitions_validated = 0
     saving_partition_validated = 0
     saved_partition_to_s3 = 0
+    calculating_partition_kpis = 0
+    calculated_partition_kpis = 0
     sleep_counter = 0
 
     # 60 seconds * number of minutes.
     max_sleep = 60 * 2
     status_updated_date = None
 
-    while saved_partition_to_s3 == 0 and sleep_counter <= max_sleep:
+    while calculated_partition_kpis == 0 and sleep_counter <= max_sleep:
 
         if json_response['status']['step_name'] == "Started" and started_validated == 0:
             ''' This is step 1 validation'''
@@ -354,7 +355,7 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
             assert json_response['updated_date'] != status_updated_date
             status_updated_date = json_response['status']['updated_date']
             assert json_response['status']['has_error'] is False
-            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['is_complete'] is False
             assert json_response['s3_presigned_url'] is not None
 
             ## Verify the signed URL
@@ -368,6 +369,38 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
 
             saved_partition_to_s3 = 1
             print("Step: Saved partition to S3")
+            sleep_counter = 0
+
+        elif json_response['status']['step_name'] == "Calculating Partition KPIs" and calculating_partition_kpis == 0:
+            ''' This is step 6 validation'''
+            assert json_response['status']['step_name'] == "Calculating Partition KPIs"
+            assert json_response['updated_date'] != created_date
+            assert json_response['updated_date'] == json_response['status']['updated_date']
+            assert json_response['updated_date'] != status_updated_date
+            status_updated_date = json_response['status']['updated_date']
+            assert json_response['status']['has_error'] is False
+            assert json_response['status']['is_complete'] is False
+            assert json_response['s3_presigned_url'] is not None
+            assert json_response['kpis'] == []
+
+            calculating_partition_kpis = 1
+            print("Step: Calculating Partition KPIs")
+            sleep_counter = 0
+
+        elif json_response['status']['step_name'] == "Calculated Partition KPIs" and calculated_partition_kpis == 0:
+            ''' This is step 7 validation'''
+            assert json_response['status']['step_name'] == "Calculated Partition KPIs"
+            assert json_response['updated_date'] != created_date
+            assert json_response['updated_date'] == json_response['status']['updated_date']
+            assert json_response['updated_date'] != status_updated_date
+            status_updated_date = json_response['status']['updated_date']
+            assert json_response['status']['has_error'] is False
+            assert json_response['status']['is_complete'] is True
+            assert json_response['s3_presigned_url'] is not None
+            assert len(json_response['kpis']) > 0
+
+            calculated_partition_kpis = 1
+            print("Step: Calculated Partition KPIs")
             sleep_counter = 0
 
         sleep_counter += 1
@@ -384,3 +417,46 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
         s3_url_data = requests.get(json_response['s3_presigned_url'])
         assert s3_url_data.status_code == 403
 
+
+def test_plans_get_response_kpi_validation(env, api, auth, level):
+    """
+        Test to verify the kpi fields are correct in a plans get by id response. We will be validating the key exists,
+        not NULL and correct type.
+
+        return: None
+        """
+
+    response = plans_get_by_id(env, api, auth, level, params.test_plan_id)
+    json_response = response.json()
+
+    assert response.status_code == 200
+
+    assert 'kpis' in json_response, "Response: \n{0}".format(json_response)
+    assert isinstance(json_response['kpis'], list), "Response: \n{0}".format(json_response)
+    assert json_response['kpis'] is not None, "Response: \n{0}".format(json_response)
+
+    kpis = json_response['kpis']
+
+    assert kpis[0]['name'] == "wayline_count", "Response: \n{0}".format(kpis[0]['name'])
+    assert kpis[1]['name'] == "headland_area", "Response: \n{0}".format(kpis[1]['name'])
+    assert kpis[2]['name'] == "primary_area", "Response: \n{0}".format(kpis[2]['name'])
+
+    for kpi in kpis:
+        assert isinstance(kpi['name'], str), "Response: \n{0}".format(kpi)
+        assert kpi['name'] is not None, "Response: \n{0}".format(kpi)
+
+        assert 'result' in kpi, "Response: \n{0}".format(kpi)
+        assert isinstance(kpi['result'], dict), "Response: \n{0}".format(kpi)
+        assert kpi['result'] is not None, "Response: \n{0}".format(kpi)
+
+        result = kpi['result']
+
+        assert 'value' in result, "Response: \n{0}".format(result)
+        assert isinstance(result['value'], str), "Response: \n{0}".format(result)
+        assert result['value'] is not None, "Response: \n{0}".format(result)
+
+        if 'unit' in result:
+            assert isinstance(result['unit'], str), "Response: \n{0}".format(result)
+            assert result['unit'] is not None, "Response: \n{0}".format(result)
+
+    assert len(kpis) == 3

@@ -1,7 +1,6 @@
 import base64
 import boto3
-import config
-import json
+import params
 import logging
 import requests
 import urllib3
@@ -24,7 +23,7 @@ def oauth(env, auth):
 
     logger = logging.getLogger('api_testing')
 
-    if config.token is None or datetime.now() > config.expire_time:
+    if params.token is None or datetime.now() > params.expire_time:
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         session = boto3.Session(profile_name=env)
@@ -111,15 +110,15 @@ def oauth(env, auth):
                                 headers=headers, data=payload, verify=False)
         json_response = response.json()
 
-        token = config.token = json_response['access_token']
+        token = params.token = json_response['access_token']
         # Set the token expire time to 50 minutes instead of 1 hour to avoid
         # race conditions
-        config.expire_time = datetime.now() + timedelta(minutes=50)
+        params.expire_time = datetime.now() + timedelta(minutes=50)
 
         return token
 
     else:
-        token = config.token
+        token = params.token
 
         return token
 

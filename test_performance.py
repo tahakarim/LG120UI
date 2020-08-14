@@ -2,7 +2,7 @@ import json
 import logging
 import pytest
 import random
-import config
+import params
 import helpers
 import requests
 from datetime import datetime
@@ -163,8 +163,8 @@ def test_plans_post_performance(env, api, auth, level):
     """
     setup_plan_id = []
     for i in range(5):
-        payload = deepcopy(config.payload)
-        payload['field']['boundary']['boundary'] = config.three_hundred_acre_field
+        payload = deepcopy(params.payload)
+        payload['field']['boundary']['boundary'] = params.three_hundred_acre_field
         payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
                                                                            payload['field']['boundary']['boundary'][2])
         payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
@@ -197,8 +197,8 @@ def test_plans_post_performance(env, api, auth, level):
 
     print("Starting Test")
 
-    payload = deepcopy(config.payload)
-    payload['field']['boundary']['boundary'] = config.three_hundred_acre_field
+    payload = deepcopy(params.payload)
+    payload['field']['boundary']['boundary'] = params.three_hundred_acre_field
     payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
                                                                        payload['field']['boundary']['boundary'][2])
     payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
@@ -274,7 +274,7 @@ def test_plans_post_performance(env, api, auth, level):
             json_response = response.json()
 
         if json_response['status']['has_error'] is True:
-            list_of_failed_id.append(plan_id)
+            list_of_failed_id.append((plan_id, json_response['status']['step_name']))
             continue
 
         # Check to see body matches baseline
@@ -314,3 +314,7 @@ def test_plans_post_performance(env, api, auth, level):
     print("Delta Greater Than Base: {0}".format(counter))
     for i in output_data:
         print("{0}, {1}, {2}, {3}".format(i[0], i[1], i[2], i[3]))
+
+    if len(list_of_failed_id) > 0:
+        print("Number of Failed ID's: {0}".format(len(list_of_failed_id)))
+        print("Failed ID's: {0}".format(list_of_failed_id))
