@@ -1,11 +1,9 @@
 import json
 import pytest
-import random
-import config
+import params
 import helpers
-from plans_endpoint import plans_get_by_id, plans_post_payload
+from plans_endpoint import plans_post_payload
 from copy import deepcopy
-from time import sleep
 
 
 @pytest.mark.functionality
@@ -17,7 +15,7 @@ def test_plans_post_response_validation(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
@@ -46,7 +44,7 @@ def test_plans_post_field_key_missing(env, api, auth, level):
     return: None
     """
 
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field']
     payload = json.dumps(payload)
 
@@ -62,7 +60,7 @@ def test_plans_post_constraints_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['constraints']
     payload = json.dumps(payload)
 
@@ -78,7 +76,7 @@ def test_plans_post_constraints_payload_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload['constraints'] = []
     payload = json.dumps(payload)
 
@@ -94,7 +92,7 @@ def test_plans_post_field_id_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field_id']
     payload = json.dumps(payload)
 
@@ -110,7 +108,7 @@ def test_plans_post_is_ctf_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['is_ctf']
     payload = json.dumps(payload)
 
@@ -126,7 +124,7 @@ def test_plans_post_headland_width_optimized_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['headland_width_optimized']
     payload = json.dumps(payload)
 
@@ -142,7 +140,7 @@ def test_plans_post_headland_width_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['headland_width']
     payload = json.dumps(payload)
 
@@ -158,7 +156,7 @@ def test_plans_post_constraints_width_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['constraints'][0]['width']
     payload = json.dumps(payload)
 
@@ -174,7 +172,7 @@ def test_plans_post_constraints_priority_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['constraints'][0]['priority']
     payload = json.dumps(payload)
 
@@ -190,7 +188,7 @@ def test_plans_post_constraints_turning_radius_key_missing(env, api, auth, level
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['constraints'][0]['turning_radius']
     payload = json.dumps(payload)
 
@@ -206,7 +204,7 @@ def test_plans_post_constraints_ramp_up_distance_key_missing(env, api, auth, lev
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['constraints'][0]['ramp_up_distance']
     payload = json.dumps(payload)
 
@@ -222,7 +220,7 @@ def test_plans_post_constraints_ramp_down_distance_key_missing(env, api, auth, l
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['constraints'][0]['ramp_down_distance']
     payload = json.dumps(payload)
 
@@ -238,7 +236,7 @@ def test_plans_post_field_name_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field']['name']
     payload = json.dumps(payload)
 
@@ -254,7 +252,7 @@ def test_plans_post_field_boundary_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field']['boundary']
     payload = json.dumps(payload)
 
@@ -270,7 +268,7 @@ def test_plans_post_field_boundary_boundary_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field']['boundary']['boundary']
     payload = json.dumps(payload)
 
@@ -286,7 +284,7 @@ def test_plans_post_field_boundary_boundary_lat_long_key_missing(env, api, auth,
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload['field']['boundary']['boundary'] = []
     payload = json.dumps(payload)
 
@@ -302,7 +300,7 @@ def test_plans_post_field_gates_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field']['gates']
     payload = json.dumps(payload)
 
@@ -318,7 +316,7 @@ def test_plans_post_field_gates_lat_long_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload['field']['gates'] = []
     payload = json.dumps(payload)
 
@@ -334,7 +332,7 @@ def test_plans_post_field_gates_point_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field']['gates'][0]['point']
     payload = json.dumps(payload)
 
@@ -350,7 +348,7 @@ def test_plans_post_field_gates_point_lat_long_key_missing(env, api, auth, level
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload['field']['gates'][0]['point'] = []
     payload = json.dumps(payload)
 
@@ -366,7 +364,7 @@ def test_plans_post_field_obstacles_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field']['obstacles']
     payload = json.dumps(payload)
 
@@ -382,7 +380,7 @@ def test_plans_post_field_obstacles_lat_long_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload['field']['obstacles'] = []
     payload = json.dumps(payload)
 
@@ -398,7 +396,7 @@ def test_plans_post_row_direction_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['row_direction']
     payload = json.dumps(payload)
 
@@ -414,7 +412,7 @@ def test_plans_post_field_soil_type_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field']['soil_type']
     payload = json.dumps(payload)
 
@@ -430,7 +428,7 @@ def test_plans_post_row_direction_lat_long_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload['row_direction'] = []
     payload = json.dumps(payload)
 
@@ -446,7 +444,7 @@ def test_plans_post_field_id_key_value_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload['field_id'] = ""
     payload = json.dumps(payload)
 
@@ -476,8 +474,8 @@ def test_plans_post_field_boundary_in_dms_format(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
-    payload['field']['boundary']['boundary'] = deepcopy(config.three_hundred_acre_field)
+    payload = deepcopy(params.payload)
+    payload['field']['boundary']['boundary'] = deepcopy(params.three_hundred_acre_field)
 
     payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
                                                                        payload['field']['boundary']['boundary'][2])
@@ -501,8 +499,8 @@ def test_plans_post_field_boundary_in_dmm_format(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
-    payload['field']['boundary']['boundary'] = deepcopy(config.three_hundred_acre_field)
+    payload = deepcopy(params.payload)
+    payload['field']['boundary']['boundary'] = deepcopy(params.three_hundred_acre_field)
 
     payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
                                                                        payload['field']['boundary']['boundary'][2])
@@ -526,7 +524,7 @@ def test_plans_post_field_soil_type_invalid_choice(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload['field']['soil_type'] = "ocean_salt_water"
 
     response = plans_post_payload(env, api, auth, level, payload)

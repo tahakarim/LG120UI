@@ -1,7 +1,7 @@
 import json
 import pytest
 import random
-import config
+import params
 import helpers
 from plans_endpoint import plans_get_by_id, plans_post_payload
 from copy import deepcopy
@@ -16,7 +16,7 @@ def test_plans_gate_not_connected_to_field(env, api, auth, level):
     return: None
     """
 
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload['field']['gates'][0]['point']['lat'] = '-10.450962'
     payload['field']['gates'][0]['point']['lng'] = '105.691082'
     payload = json.dumps(payload)
@@ -67,7 +67,7 @@ def test_plans_row_direction_multiple_lat_long_keys(env, api, auth, level):
     return: None
     """
 
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload['row_direction'].append({"lat": 0.0010183, "lng": -0.0001983})
     payload = json.dumps(payload)
     print("\nPayload: {0}".format(payload))
@@ -113,9 +113,9 @@ def test_plans_field_validation_indiana(env, api, auth, level):
 
       return: None
       """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
 
-    payload['field']['boundary']['boundary'] = config.indiana
+    payload['field']['boundary']['boundary'] = params.indiana
     payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
                                                                        payload['field']['boundary']['boundary'][2])
 
@@ -153,8 +153,8 @@ def test_plans_field_validation_indiana(env, api, auth, level):
         sleep_counter += 1
 
     # Removing these validations until this field passes
-    # assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
     # assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+    # assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
 
     assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
 
@@ -175,11 +175,11 @@ def test_plans_field_validation_quarter_circle(env, api, auth, level):
 
       return: None
       """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
 
-    payload['field']['boundary']['boundary'] = config.quarter_circle_field
+    payload['field']['boundary']['boundary'] = params.quarter_circle_field
 
-    payload['field']['gates'][0]['point'] = random.choice(config.quarter_circle_field)
+    payload['field']['gates'][0]['point'] = random.choice(params.quarter_circle_field)
 
     payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.399534},
                                                                    {'lat': 37.794469, 'lng': -97.403632})
@@ -214,8 +214,8 @@ def test_plans_field_validation_quarter_circle(env, api, auth, level):
         json_response = response.json()
         sleep_counter += 1
 
-    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
     assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+    assert json_response['status']['step_name'] == params.last_step_name, "Response: \n{0}".format(json_response)
 
     assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
 
@@ -236,7 +236,7 @@ def test_plans_field_boundary_boundary_single_lat_long_key(env, api, auth, level
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field']['boundary']['boundary'][0:3]
     payload = json.dumps(payload)
     print("\nPayload: {0}".format(payload))
@@ -284,7 +284,7 @@ def test_plans_field_boundary_boundary_two_lat_long_keys(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     del payload['field']['boundary']['boundary'][0:2]
     payload = json.dumps(payload)
     print("\nPayload: {0}".format(payload))
@@ -332,7 +332,7 @@ def test_plans_field_boundary_boundary_lat_long_key_set_to_zero(env, api, auth, 
 
     return: None
     """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
     payload1 = payload['field']['boundary']['boundary']
     for i in payload1:
         i.update({"lat": 0, "lng": 0})
@@ -383,10 +383,10 @@ def test_plans_lat_lng_invalid_values(env, api, auth, level):
 
     return: None
     """
-    row_payload = deepcopy(config.payload)
-    boundary_payload = deepcopy(config.payload)
-    gates_payload = deepcopy(config.payload)
-    obstacles_payload = deepcopy(config.payload)
+    row_payload = deepcopy(params.payload)
+    boundary_payload = deepcopy(params.payload)
+    gates_payload = deepcopy(params.payload)
+    obstacles_payload = deepcopy(params.payload)
     invalid_lat_lng = [-91, 91, -181, 181]
     random.shuffle(invalid_lat_lng)
     json_fields = ['row_direction', 'boundary', 'gates']  # Need to add 'obstacles' into list.
@@ -460,11 +460,11 @@ def test_plans_field_validation_half_circle(env, api, auth, level):
 
       return: None
       """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
 
-    payload['field']['boundary']['boundary'] = config.half_circle_field
+    payload['field']['boundary']['boundary'] = params.half_circle_field
 
-    payload['field']['gates'][0]['point'] = random.choice(config.half_circle_field)
+    payload['field']['gates'][0]['point'] = random.choice(params.half_circle_field)
 
     payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.818026, 'lng': -97.404255},
                                                                    {'lat': 37.818026, 'lng': -97.399223})
@@ -498,8 +498,8 @@ def test_plans_field_validation_half_circle(env, api, auth, level):
         json_response = response.json()
         sleep_counter += 1
 
-    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
     assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+    assert json_response['status']['step_name'] == params.last_step_name, "Response: \n{0}".format(json_response)
 
     assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
 
@@ -519,11 +519,11 @@ def test_plans_field_validation_full_circle(env, api, auth, level):
 
       return: None
       """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
 
-    payload['field']['boundary']['boundary'] = config.circle_feild
+    payload['field']['boundary']['boundary'] = params.circle_feild
 
-    payload['field']['gates'][0]['point'] = random.choice(config.circle_feild)
+    payload['field']['gates'][0]['point'] = random.choice(params.circle_feild)
 
     payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 34.964350, 'lng': -114.655483},
                                                                    {'lat': 34.964350, 'lng': -114.654096})
@@ -557,8 +557,8 @@ def test_plans_field_validation_full_circle(env, api, auth, level):
         json_response = response.json()
         sleep_counter += 1
 
-    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
     assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+    assert json_response['status']['step_name'] == params.last_step_name, "Response: \n{0}".format(json_response)
 
     assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
 
@@ -578,9 +578,9 @@ def test_plans_field_validation_marktoberdorf(env, api, auth, level):
 
       return: None
       """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
 
-    payload['field']['boundary']['boundary'] = config.marktoberdorf_test_field
+    payload['field']['boundary']['boundary'] = params.marktoberdorf_test_field
 
     payload['field']['gates'][0]['point']['lat'] = '47.783987'
     payload['field']['gates'][0]['point']['lng'] = '10.606438'
@@ -621,8 +621,8 @@ def test_plans_field_validation_marktoberdorf(env, api, auth, level):
         json_response = response.json()
         sleep_counter += 1
 
-    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
     assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+    assert json_response['status']['step_name'] == params.last_step_name, "Response: \n{0}".format(json_response)
 
     assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
 
@@ -642,10 +642,10 @@ def test_plans_field_validation_millennium_park(env, api, auth, level):
 
       return: None
       """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
 
-    payload['field']['boundary']['boundary'] = config.millennium_park_test_field
-    payload['field']['gates'][0]['point'] = random.choice(config.millennium_park_test_field)
+    payload['field']['boundary']['boundary'] = params.millennium_park_test_field
+    payload['field']['gates'][0]['point'] = random.choice(params.millennium_park_test_field)
     payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 41.876887, 'lng': -87.620123},
                                                                    {'lat': 41.874713, 'lng': -87.617830})
     payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 41.876914, 'lng': -87.617892},
@@ -679,8 +679,8 @@ def test_plans_field_validation_millennium_park(env, api, auth, level):
         json_response = response.json()
         sleep_counter += 1
 
-    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
     assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
+    assert json_response['status']['step_name'] == params.last_step_name, "Response: \n{0}".format(json_response)
 
     assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
 
@@ -700,16 +700,16 @@ def test_plans_field_validation_boundary_out_of_order_square(env, api, auth, lev
 
       return: None
       """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
 
-    payload = deepcopy(config.payload)
-    payload['field']['boundary']['boundary'] = config.three_hundred_acre_field
+    payload = deepcopy(params.payload)
+    payload['field']['boundary']['boundary'] = params.three_hundred_acre_field
 
     temp_point_two = payload['field']['boundary']['boundary'][1]
     payload['field']['boundary']['boundary'][1] = payload['field']['boundary']['boundary'][2]
     payload['field']['boundary']['boundary'][2] = temp_point_two
 
-    payload['field']['gates'][0]['point'] = random.choice(config.three_hundred_acre_field)
+    payload['field']['gates'][0]['point'] = random.choice(params.three_hundred_acre_field)
 
     payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
                                                                    payload['field']['boundary']['boundary'][2])
@@ -740,7 +740,7 @@ def test_plans_field_validation_boundary_out_of_order_square(env, api, auth, lev
         json_response = response.json()
         sleep_counter += 1
 
-    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    assert json_response['status']['step_name'] == params.last_step_name, "Response: \n{0}".format(json_response)
     assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
 
     assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
@@ -760,15 +760,15 @@ def test_plans_field_validation_boundary_out_of_order_circle(env, api, auth, lev
 
       return: None
       """
-    payload = deepcopy(config.payload)
+    payload = deepcopy(params.payload)
 
-    circle_field = deepcopy(config.circle_feild)
+    circle_field = deepcopy(params.circle_feild)
     random.shuffle(circle_field)
     payload['field']['boundary']['boundary'] = circle_field
 
-    payload['field']['gates'][0]['point'] = random.choice(config.circle_feild)
-    payload['row_direction'][0] = random.choice(config.circle_feild)
-    payload['row_direction'][1] = random.choice(config.circle_feild)
+    payload['field']['gates'][0]['point'] = random.choice(params.circle_feild)
+    payload['row_direction'][0] = random.choice(params.circle_feild)
+    payload['row_direction'][1] = random.choice(params.circle_feild)
 
     payload = json.dumps(payload)
 
@@ -795,7 +795,7 @@ def test_plans_field_validation_boundary_out_of_order_circle(env, api, auth, lev
         json_response = response.json()
         sleep_counter += 1
 
-    assert json_response['status']['step_name'] == config.last_step_name, "Response: \n{0}".format(json_response)
+    assert json_response['status']['step_name'] == params.last_step_name, "Response: \n{0}".format(json_response)
     assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
 
     assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
