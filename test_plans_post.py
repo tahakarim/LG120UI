@@ -2,8 +2,10 @@ import json
 import pytest
 import params
 import helpers
-from plans_endpoint import plans_post_payload
+import random
+from plans_endpoint import plans_post_payload, plans_get_by_id
 from copy import deepcopy
+from time import sleep
 
 
 @pytest.mark.functionality
@@ -49,8 +51,11 @@ def test_plans_post_field_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected parameter field is" \
+                                       " required, but none was provided."
 
 
 @pytest.mark.exception
@@ -65,8 +70,11 @@ def test_plans_post_constraints_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected parameter constraints" \
+                                       " is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -81,8 +89,11 @@ def test_plans_post_constraints_payload_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected parameter constraints " \
+                                       "is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -97,8 +108,11 @@ def test_plans_post_field_id_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected parameter field_id " \
+                                       "is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -113,8 +127,11 @@ def test_plans_post_is_ctf_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected parameter is_ctf " \
+                                       "is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -129,8 +146,11 @@ def test_plans_post_headland_width_optimized_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected parameter " \
+                                       "headland_width_optimized is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -145,8 +165,11 @@ def test_plans_post_headland_width_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected parameter headland_width" \
+                                       " is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -161,8 +184,11 @@ def test_plans_post_constraints_width_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected constraints parameter" \
+                                       " width is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -177,8 +203,11 @@ def test_plans_post_constraints_priority_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected constraints parameter" \
+                                       " priority is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -193,8 +222,11 @@ def test_plans_post_constraints_turning_radius_key_missing(env, api, auth, level
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected constraints parameter " \
+                                       "turning_radius is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -209,8 +241,11 @@ def test_plans_post_constraints_ramp_up_distance_key_missing(env, api, auth, lev
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected constraints parameter " \
+                                       "ramp_up_distance is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -225,8 +260,11 @@ def test_plans_post_constraints_ramp_down_distance_key_missing(env, api, auth, l
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected constraints parameter" \
+                                       " ramp_down_distance is required, but none was provided."
 
 
 @pytest.mark.skip(reason="deprecated on July 14 2020")
@@ -241,6 +279,9 @@ def test_plans_post_field_name_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+
+    json_response = response.json()
+    print(json_response)
 
     assert response.status_code == 400
 
@@ -257,8 +298,11 @@ def test_plans_post_field_boundary_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected field parameter " \
+                                       "boundary is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -273,8 +317,11 @@ def test_plans_post_field_boundary_boundary_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected field parameter" \
+                                       " boundary boundary is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -289,8 +336,91 @@ def test_plans_post_field_boundary_boundary_lat_long_key_missing(env, api, auth,
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field parameter " \
+                                       "boundary boundary is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_field_boundary_boundary_lat_null(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the field boundary boundary lat value is null
+
+    return: None
+    """
+    null_lat = None
+
+    payload = deepcopy(params.payload)
+    payload['field']['boundary']['boundary'][0]['lat'] = null_lat
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field boundary" \
+                                       " boundary point parameter lat is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_field_boundary_boundary_lng_null(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the field boundary boundary lng value is null
+
+    return: None
+    """
+    null_lng = None
+
+    payload = deepcopy(params.payload)
+    payload['field']['boundary']['boundary'][0]['lng'] = null_lng
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field boundary " \
+                                       "boundary point parameter lng is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_field_boundary_boundary_lat_key_missing(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the field boundary boundary lat key is missing
+
+    return: None
+    """
+    payload = deepcopy(params.payload)
+    del payload['field']['boundary']['boundary'][0]['lat']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field boundary " \
+                                       "boundary point parameter lat is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_field_boundary_boundary_lng_key_missing(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the field boundary boundary lng key is missing
+
+    return: None
+    """
+    payload = deepcopy(params.payload)
+    del payload['field']['boundary']['boundary'][0]['lng']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field boundary" \
+                                       " boundary point parameter lng is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -305,8 +435,91 @@ def test_plans_post_field_gates_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected field parameter gates" \
+                                       " is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_field_gates_lng_missing(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the field gates lng key is missing
+
+    return: None
+    """
+    payload = deepcopy(params.payload)
+    del payload['field']['gates'][0]['point']['lng']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field gates point " \
+                                       "parameter lng is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_field_gates_lat_missing(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the field gates lat key is missing
+
+    return: None
+    """
+    payload = deepcopy(params.payload)
+    del payload['field']['gates'][0]['point']['lat']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field gates point " \
+                                       "parameter lat is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_field_gates_lat_null(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the field gates lat value is null
+
+    return: None
+    """
+    null_lat = None
+
+    payload = deepcopy(params.payload)
+    payload['field']['gates'][0]['point']['lat'] = null_lat
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field gates point" \
+                                       " parameter lat is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_field_gates_lng_null(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the field gates lng value is null
+
+    return: None
+    """
+    null_lng = None
+
+    payload = deepcopy(params.payload)
+    payload['field']['gates'][0]['point']['lng'] = null_lng
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field gates point " \
+                                       "parameter lng is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -321,8 +534,11 @@ def test_plans_post_field_gates_lat_long_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field parameter" \
+                                       " gates is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -337,8 +553,11 @@ def test_plans_post_field_gates_point_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field gates parameter" \
+                                       " point is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -353,24 +572,109 @@ def test_plans_post_field_gates_point_lat_long_key_missing(env, api, auth, level
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected field gates point" \
+                                       " parameter lat is required, but none was provided."
 
 
 @pytest.mark.exception
 def test_plans_post_field_obstacles_key_missing(env, api, auth, level):
     """
-    Test to verify we receive a 400 status if the field obstacles key is missing
+    Test to verify we receive a 200 status if the field obstacles key is missing
 
     return: None
     """
     payload = deepcopy(params.payload)
+
+    payload['field']['boundary']['boundary'] = params.quarter_circle_field
+    payload['field']['gates'][0]['point'] = payload['field']['boundary']['boundary'][0]
+    payload['row_direction'][0] = payload['field']['boundary']['boundary'][0]
+    payload['row_direction'][1] = payload['field']['boundary']['boundary'][1]
+
     del payload['field']['obstacles']
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+    assert response.status_code == 200
 
-    assert response.status_code == 400
+    plan_id = json_response['plan_id']
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    sleep_counter = 0
+    sleep_max_counter = ((60 * 2) + 30)
+
+    while json_response['status']['is_complete'] != True and sleep_counter <= sleep_max_counter:
+        sleep_counter += 1
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+
+        if sleep_counter >= sleep_max_counter:
+            assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is False, "hasError is not False\n{0}".format(json_response)
+
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+            ## Need to Write ---> Add assert to validate failed in the correct step
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is False
+
+
+@pytest.mark.exception
+def test_plans_post_field_obstacles_key_validation(env, api, auth, level):
+    """
+    Test to verify we receive a 200 status if the field obstacles lat/long data has sent
+
+    return: None
+    """
+    payload = deepcopy(params.payload)
+
+    payload['field']['boundary']['boundary'] = params.quarter_circle_field
+    payload['field']['gates'][0]['point'] = payload['field']['boundary']['boundary'][0]
+    payload['row_direction'][0] = payload['field']['boundary']['boundary'][0]
+    payload['row_direction'][1] = payload['field']['boundary']['boundary'][1]
+
+    payload['field']['obstacles'] = random.choice(payload['field']['boundary']['boundary'])
+
+    payload = json.dumps(payload)
+    print(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+    assert response.status_code == 200
+
+    plan_id = json_response['plan_id']
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    sleep_counter = 0
+    sleep_max_counter = ((60 * 2) + 30)
+
+    while json_response['status']['is_complete'] != True and sleep_counter <= sleep_max_counter:
+        sleep_counter += 1
+        sleep(1)
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+
+        if sleep_counter >= sleep_max_counter:
+            assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is False, "hasError is not False\n{0}".format(json_response)
+
+        elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+            ## Need to Write ---> Add assert to validate failed in the correct step
+            assert json_response['status']['is_complete'] is True
+            assert json_response['status']['has_error'] is False
 
 
 @pytest.mark.exception
@@ -401,8 +705,91 @@ def test_plans_post_row_direction_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected parameter row_direction " \
+                                       "is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_row_direction_lat_null(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the row_direction lat value is null
+
+    return: None
+    """
+    null_lat = None
+
+    payload = deepcopy(params.payload)
+    payload['row_direction'][0]['lat'] = null_lat
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected row_direction" \
+                                       " parameter lat is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_row_direction_lng_null(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the row_direction lng value is null
+
+    return: None
+    """
+    null_lng = None
+
+    payload = deepcopy(params.payload)
+    payload['row_direction'][0]['lng'] = null_lng
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected row_direction " \
+                                       "parameter lng is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_row_direction_lat_key_missing(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the row_direction lat key is missing
+
+    return: None
+    """
+    payload = deepcopy(params.payload)
+    del payload['row_direction'][0]['lat']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected row_direction " \
+                                       "parameter lat is required, but none was provided."
+
+
+@pytest.mark.exception
+def test_plans_post_row_direction_lng_key_missing(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if the row_direction lng key is missing
+
+    return: None
+    """
+    payload = deepcopy(params.payload)
+    del payload['row_direction'][0]['lng']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected row_direction" \
+                                       " parameter lng is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -417,8 +804,11 @@ def test_plans_post_field_soil_type_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected field parameter " \
+                                       "soil_type is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -433,8 +823,11 @@ def test_plans_post_row_direction_lat_long_key_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected parameter " \
+                                       "row_direction is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -449,8 +842,11 @@ def test_plans_post_field_id_key_value_missing(env, api, auth, level):
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected parameter " \
+                                       "field_id is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -461,10 +857,12 @@ def test_plans_post_payload_empty(env, api, auth, level):
     return: None
     """
     payload = '{}'
-
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected parameter " \
+                                       "field_id is required, but none was provided."
 
 
 @pytest.mark.exception
@@ -488,6 +886,9 @@ def test_plans_post_field_boundary_in_dms_format(env, api, auth, level):
     payload['field']['boundary']['boundary'][0]['lng'] = "97°38'40.4 W"
 
     response = plans_post_payload(env, api, auth, level, payload)
+
+    json_response = response.json()
+    print(json_response)
 
     assert response.status_code == 400
 
@@ -514,6 +915,9 @@ def test_plans_post_field_boundary_in_dmm_format(env, api, auth, level):
 
     response = plans_post_payload(env, api, auth, level, payload)
 
+    json_response = response.json()
+    print(json_response)
+
     assert response.status_code == 400
 
 
@@ -526,10 +930,14 @@ def test_plans_post_field_soil_type_invalid_choice(env, api, auth, level):
     """
     payload = deepcopy(params.payload)
     payload['field']['soil_type'] = "ocean_salt_water"
+    payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
 
     assert response.status_code == 400
+    assert json_response['message'] == "Unable to create plan with invalid input: Expected field parameter" \
+                                       " soil_type has an incorrect value."
 
 
 if __name__ == "__main__":
