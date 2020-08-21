@@ -17,12 +17,13 @@ def test_plans_gate_not_connected_to_field(env, api, auth, level):
     """
 
     payload = deepcopy(params.payload)
-    payload['field']['gates'][0]['point']['lat'] = '-10.450962'
-    payload['field']['gates'][0]['point']['lng'] = '105.691082'
+    payload['field']['gates'][0]['point']['lat'] = -10.450962
+    payload['field']['gates'][0]['point']['lng'] = 105.691082
     payload = json.dumps(payload)
     print("\nPayload: {0}".format(payload))
 
     response = plans_post_payload(env, api, auth, level, payload)
+    print(response)
     assert response.status_code == 200
     json_response = response.json()
     plan_id = json_response['plan_id']
@@ -335,7 +336,7 @@ def test_plans_field_boundary_boundary_lat_long_key_set_to_zero(env, api, auth, 
     payload = deepcopy(params.payload)
     payload1 = payload['field']['boundary']['boundary']
     for i in payload1:
-        i.update({"lat": 0, "lng": 0})
+        i.update({"lat": 0.00, "lng": 0.00})
 
     payload = json.dumps(payload)
     print("\nPayload: {0}".format(payload))
@@ -387,7 +388,7 @@ def test_plans_lat_lng_invalid_values(env, api, auth, level):
     boundary_payload = deepcopy(params.payload)
     gates_payload = deepcopy(params.payload)
     obstacles_payload = deepcopy(params.payload)
-    invalid_lat_lng = [-91, 91, -181, 181]
+    invalid_lat_lng = [-91.0, 91.0, -181.0, 181.0]
     random.shuffle(invalid_lat_lng)
     json_fields = ['row_direction', 'boundary', 'gates']  # Need to add 'obstacles' into list.
     random.shuffle(json_fields)
@@ -582,8 +583,8 @@ def test_plans_field_validation_marktoberdorf(env, api, auth, level):
 
     payload['field']['boundary']['boundary'] = params.marktoberdorf_test_field
 
-    payload['field']['gates'][0]['point']['lat'] = '47.783987'
-    payload['field']['gates'][0]['point']['lng'] = '10.606438'
+    payload['field']['gates'][0]['point']['lat'] = 47.783987
+    payload['field']['gates'][0]['point']['lng'] = 10.606438
 
     payload['row_direction'] = [
         {
