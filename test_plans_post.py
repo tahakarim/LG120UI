@@ -887,9 +887,6 @@ def test_plans_post_field_boundary_in_dms_format(env, api, auth, level):
 
     response = plans_post_payload(env, api, auth, level, payload)
 
-    json_response = response.json()
-    print(json_response)
-
     assert response.status_code == 400
 
 
@@ -914,9 +911,6 @@ def test_plans_post_field_boundary_in_dmm_format(env, api, auth, level):
     payload['field']['boundary']['boundary'][0]['lng'] = "97°38.6734 W"
 
     response = plans_post_payload(env, api, auth, level, payload)
-
-    json_response = response.json()
-    print(json_response)
 
     assert response.status_code == 400
 

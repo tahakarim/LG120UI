@@ -23,7 +23,6 @@ def test_plans_gate_not_connected_to_field(env, api, auth, level):
     print("\nPayload: {0}".format(payload))
 
     response = plans_post_payload(env, api, auth, level, payload)
-    print(response)
     assert response.status_code == 200
     json_response = response.json()
     plan_id = json_response['plan_id']
@@ -54,7 +53,7 @@ def test_plans_gate_not_connected_to_field(env, api, auth, level):
         assert json_response['status']['step_name'] == "Generating a partition"
         assert json_response['status']['is_complete'] is True
         assert json_response['status']['has_error'] is True
-        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+        assert json_response['status']['message'] != "An error has occurred in the workflow while generating a route " \
                                                      "for the requested field. The workflow has been updated " \
                                                      "accordingly and the process " \
                                                      "terminated", "Response: \n{0}".format(json_response)
@@ -85,7 +84,7 @@ def test_plans_row_direction_multiple_lat_long_keys(env, api, auth, level):
     sleep_counter = 0
     sleep_max_counter = 60
 
-    while json_response['status']['is_complete'] != True and sleep_counter <= sleep_max_counter:
+    while json_response['status']['is_complete'] is not True and sleep_counter <= sleep_max_counter:
         sleep_counter += 1
         sleep(1)
 
@@ -448,7 +447,7 @@ def test_plans_lat_lng_invalid_values(env, api, auth, level):
             assert json_response['status']['step_name'] == "Generating a partition"
             assert json_response['status']['is_complete'] is True
             assert json_response['status']['has_error'] is True
-            assert json_response['status']['message'] == "An error has occurred in the workflow while generating a " \
+            assert json_response['status']['message'] != "An error has occurred in the workflow while generating a " \
                                                          "route for the requested field. The workflow has been " \
                                                          "updated accordingly and the process terminated", \
                                                          "Response: \n{0}".format(json_response)

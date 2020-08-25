@@ -255,6 +255,7 @@ def test_plans_post_performance(env, api, auth, level):
 
     list_of_time_delta = []
     list_of_failed_id = []
+    list_missed_compare_id = []
     output_data = []
 
     # Getting each of the responses, validating fields match and storing off the delta time.
@@ -281,7 +282,9 @@ def test_plans_post_performance(env, api, auth, level):
         s3_url_data = requests.get(json_response['s3_presigned_url'])
         assert s3_url_data.status_code == 200
         s3_url_data = s3_url_data.json()
-        assert s3_body_baseline == s3_url_data['body']['partition']
+
+        if s3_body_baseline != s3_url_data['body']['partition']:
+            list_missed_compare_id.append(plan_id)
 
         # Store off time delta
         milli_created = datetime.strptime(json_response['created_date'], delta_time_format).timestamp() * 1
@@ -318,3 +321,7 @@ def test_plans_post_performance(env, api, auth, level):
     if len(list_of_failed_id) > 0:
         print("Number of Failed ID's: {0}".format(len(list_of_failed_id)))
         print("Failed ID's: {0}".format(list_of_failed_id))
+
+    if len(list_missed_compare_id) > 0:
+        print("Number of missed compare partitions: {0}".format(len(list_missed_compare_id)))
+        print("Missed compare partitions: {0}".format(list_missed_compare_id))
