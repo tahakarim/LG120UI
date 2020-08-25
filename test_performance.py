@@ -13,7 +13,8 @@ from copy import deepcopy
 from time import sleep
 
 
-@pytest.mark.performance
+@pytest.mark.skipif(params.global_api != 'v1alpha1', reason="Not supported in api version: {0}".format(
+    params.global_api))
 def test_plans_get_response_performance(env, api, auth, level):
     """
     Test to validate the response time of GET /plans over multiple iterations.

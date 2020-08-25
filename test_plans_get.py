@@ -9,8 +9,9 @@ from copy import deepcopy
 from time import sleep
 
 
-@pytest.mark.functionality
-@pytest.mark.smoke
+@pytest.mark.skipif(params.global_api != 'v1alpha1', reason="Not supported in api version: {0}".format(
+    params.global_api))
+@pytest.mark.v1alpha1_tests
 def test_plans_get_response_validation(env, api, auth, level):
     """
     Test to verify the fields are correct in a plans get response. We will be validating the key exists,
@@ -82,8 +83,9 @@ def test_plans_get_response_validation(env, api, auth, level):
             assert len(item['status']) == 4
 
 
-@pytest.mark.functionality
-@pytest.mark.smoke
+@pytest.mark.skipif(params.global_api != 'v1alpha1', reason="Not supported in api version: {0}".format(
+    params.global_api))
+@pytest.mark.v1alpha1_tests
 def test_plans_get_response_at_least_one_plan_id_returned(env, api, auth, level):
     """
     Test to verify at least one plan id is returned from GET/plans.
@@ -105,6 +107,7 @@ def test_plans_get_response_at_least_one_plan_id_returned(env, api, auth, level)
 
 @pytest.mark.functionality
 @pytest.mark.smoke
+@pytest.mark.v1alpha1_tests
 def test_plans_get_by_id_response_validation(env, api, auth, level):
     """
     Test to validate that we are returning one status and that it is the correct status
@@ -161,6 +164,7 @@ def test_plans_get_by_id_non_guid_id(env, api, auth, level):
 
 @pytest.mark.functionality
 @pytest.mark.smoke
+@pytest.mark.v1alpha1_tests
 def test_plans_get_status_response_validation(env, api, auth, level):
     """
     Test to validate that we are returning one status and that it is the correct status
@@ -240,6 +244,7 @@ def test_plans_get_status_no_id(env, api, auth, level):
 
 @pytest.mark.functionality
 @pytest.mark.smoke
+@pytest.mark.v1alpha1_tests
 def test_plans_get_response_data_validation(env, api, auth, level, short):
     """
     Test to validate that the stepname is updated correctly.
@@ -417,7 +422,9 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
         s3_url_data = requests.get(json_response['s3_presigned_url'])
         assert s3_url_data.status_code == 403
 
-
+@pytest.mark.functionality
+@pytest.mark.smoke
+@pytest.mark.v1alpha1_tests
 def test_plans_get_response_kpi_validation(env, api, auth, level):
     """
         Test to verify the kpi fields are correct in a plans get by id response. We will be validating the key exists,

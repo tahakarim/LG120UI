@@ -3,6 +3,7 @@ from plans_endpoint import get_swagger
 
 
 @pytest.mark.smoke
+@pytest.mark.functionality
 def test_swagger_response_validation(env, api, auth, level):
     """
     Test to verify the swagger call returns a 200 response and the JSON has not changed
