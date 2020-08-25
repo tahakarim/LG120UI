@@ -262,9 +262,8 @@ def get_swagger(env, api, auth, level):
 
     url = get_url(env, api)
     logger.debug(url)
-    headers = {'Authorization': 'Bearer ' + access_token}
 
-    response = requests.get(url, headers=headers)
+    response = requests.get(url)
     data = dump.dump_all(response)
     logger.debug(data.decode('utf-8'))
 
