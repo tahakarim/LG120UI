@@ -18,7 +18,7 @@ def pytest_addoption(parser):
     parser.addoption("--env", action="store", default="stg", dest="env",
                      choices=['dev', 'stg', 'prod'])
     parser.addoption("--api", action="store", default="v1alpha1", dest="api",
-                     choices=['v1alpha1'])
+                     choices=['v1alpha1', 'v1beta1'])
     parser.addoption("--auth", action="store", default="aaat", dest="auth",
                      choices=['aaa', 'aaat'])
     parser.addoption("--level", action="store", default='INFO', dest="level",
@@ -56,6 +56,7 @@ def pytest_configure(config):
     api = config.getoption('api')
     auth = config.getoption('auth')
     level = config.getoption('level')
+    params.global_api = config.getoption('api')
     payload = deepcopy(params.payload)
     payload['field']['boundary']['boundary'] = params.quarter_circle_field
     payload['field']['gates'][0]['point'] = random.choice(params.quarter_circle_field)

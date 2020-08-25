@@ -2,6 +2,7 @@ token = None
 expier_time = None
 last_step_name = "Calculated Partition KPIs"
 test_plan_id = None
+global_api = None
 payload = {
     "field_id": 12345,
     "is_ctf": False,

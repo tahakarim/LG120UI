@@ -10,6 +10,7 @@ from time import sleep
 
 @pytest.mark.functionality
 @pytest.mark.smoke
+@pytest.mark.v1alpha1_tests
 def test_plans_post_response_validation(env, api, auth, level):
     """
     Test to verify the fields are correct in a plans post response. We will be validating the key exists,
