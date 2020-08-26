@@ -114,15 +114,8 @@ def test_plans_get_by_id_response_validation(env, api, auth, level):
 
     return: None
     """
-    response = plans_get(env, api, auth, level)
-    json_response = response.json()
-
-    assert response.status_code == 200
-
-    plan_id = random.choice(json_response)['plan_id']
-
-    # Request to get a single ID resposne
-    response = plans_get_by_id(env, api, auth, level, plan_id)
+    # Request to get a single ID response
+    response = plans_get_by_id(env, api, auth, level, params.test_plan_id)
     json_response = response.json()
 
     assert response.status_code == 200
@@ -131,7 +124,7 @@ def test_plans_get_by_id_response_validation(env, api, auth, level):
     assert type(json_response) is not list
 
     # Validating plan_id equals what was requested
-    assert json_response['plan_id'] == plan_id
+    assert json_response['plan_id'] == params.test_plan_id
 
 
 @pytest.mark.exception
@@ -171,18 +164,16 @@ def test_plans_get_status_response_validation(env, api, auth, level):
 
     return: None
     """
-    response = plans_get(env, api, auth, level)
+    response = plans_get_by_id(env, api, auth, level, params.test_plan_id)
     json_response = response.json()
 
     assert response.status_code == 200
 
-    # Grab a plan id and save off the status updated_date
-    r_index = random.choice(json_response)
-    plan_id = r_index['plan_id']
-    status_updated_date = r_index['status']['updated_date']
+    # Grab a status update date and save off the status updated_date
+    status_updated_date = json_response['status']['updated_date']
 
-    # Request to get a single ID resposne
-    response = plans_get_status(env, api, auth, level, plan_id)
+    # Request to get a single ID response
+    response = plans_get_status(env, api, auth, level, params.test_plan_id)
     json_response = response.json()
 
     assert response.status_code == 200
@@ -279,6 +270,41 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
     assert response.status_code == 200
     json_response = response.json()
 
+    assert 'plan_id' in json_response, "Response: \n{0}".format(json_response)
+    assert isinstance(json_response['plan_id'], str), "Response: \n{0}".format(json_response)
+    assert json_response['plan_id'] is not None, "Response: \n{0}".format(json_response)
+
+    assert 'field_id' in json_response, "Response: \n{0}".format(json_response)
+    assert isinstance(json_response['field_id'], str), "Response: \n{0}".format(json_response)
+    assert json_response['field_id'] is not None, "Response: \n{0}".format(json_response)
+
+    assert 'created_date' in json_response, "Response: \n{0}".format(json_response)
+    assert isinstance(json_response['created_date'], str), "Response: \n{0}".format(json_response)
+    assert json_response['created_date'] is not None, "Response: \n{0}".format(json_response)
+
+    assert 'updated_date' in json_response, "Response: \n{0}".format(json_response)
+    assert isinstance(json_response['updated_date'], str), "Response: \n{0}".format(json_response)
+    assert json_response['updated_date'] is not None, "Response: \n{0}".format(json_response)
+
+    assert 'is_complete' in json_response['status'], "Response: \n{0}".format(json_response)
+    assert isinstance(json_response['status']['is_complete'], bool), "Response: \n{0}".format(json_response)
+    assert json_response['status']['is_complete'] is not None, "Response: \n{0}".format(json_response)
+
+    assert 'updated_date' in json_response['status'], "Response: \n{0}".format(json_response)
+    assert isinstance(json_response['status']['updated_date'], str), "Response: \n{0}".format(json_response)
+    assert json_response['status']['updated_date'] is not None, "Response: \n{0}".format(json_response)
+
+    assert 'step_name' in json_response['status'], "Response: \n{0}".format(json_response)
+    assert isinstance(json_response['status']['step_name'], str), "Response: \n{0}".format(json_response)
+    assert json_response['status']['step_name'] is not None, "Response: \n{0}".format(json_response)
+
+    assert 'has_error' in json_response['status'], "Response: \n{0}".format(json_response)
+    assert isinstance(json_response['status']['has_error'], bool), "Response: \n{0}".format(json_response)
+    assert json_response['status']['has_error'] is not None, "Response: \n{0}".format(json_response)
+
+    assert len(json_response) == 5
+    assert len(json_response['status']) == 4
+
     assert json_response['plan_id'] == plan_id
     assert json_response['created_date'] == created_date
 
@@ -361,7 +387,12 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
             status_updated_date = json_response['status']['updated_date']
             assert json_response['status']['has_error'] is False
             assert json_response['status']['is_complete'] is False
-            assert json_response['s3_presigned_url'] is not None
+            assert 's3_presigned_url' in json_response, "Response: \n{0}".format(json_response)
+            assert isinstance(json_response['s3_presigned_url'], str), "Response: \n{0}".format(json_response)
+            assert json_response['s3_presigned_url'] is not None, "Response: \n{0}".format(json_response)
+
+            # Validate no extra fields in response
+            assert len(json_response) == 6
 
             ## Verify the signed URL
             s3_url_data = requests.get(json_response['s3_presigned_url'])
@@ -402,7 +433,35 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
             assert json_response['status']['has_error'] is False
             assert json_response['status']['is_complete'] is True
             assert json_response['s3_presigned_url'] is not None
-            assert len(json_response['kpis']) > 0
+            assert 'kpis' in json_response, "Response: \n{0}".format(json_response)
+            assert isinstance(json_response['kpis'], list), "Response: \n{0}".format(json_response)
+            assert json_response['kpis'] is not None, "Response: \n{0}".format(json_response)
+
+            kpis = json_response['kpis']
+
+            assert kpis[0]['name'] == "wayline_count", "Response: \n{0}".format(kpis[0]['name'])
+            assert kpis[1]['name'] == "headland_area", "Response: \n{0}".format(kpis[1]['name'])
+            assert kpis[2]['name'] == "primary_area", "Response: \n{0}".format(kpis[2]['name'])
+
+            for kpi in kpis:
+                assert isinstance(kpi['name'], str), "Response: \n{0}".format(kpi)
+                assert kpi['name'] is not None, "Response: \n{0}".format(kpi)
+
+                assert 'result' in kpi, "Response: \n{0}".format(kpi)
+                assert isinstance(kpi['result'], dict), "Response: \n{0}".format(kpi)
+                assert kpi['result'] is not None, "Response: \n{0}".format(kpi)
+
+                result = kpi['result']
+
+                assert 'value' in result, "Response: \n{0}".format(result)
+                assert isinstance(result['value'], str), "Response: \n{0}".format(result)
+                assert result['value'] is not None, "Response: \n{0}".format(result)
+
+                if 'unit' in result:
+                    assert isinstance(result['unit'], str), "Response: \n{0}".format(result)
+                    assert result['unit'] is not None, "Response: \n{0}".format(result)
+
+            assert len(kpis) == 3
 
             calculated_partition_kpis = 1
             print("Step: Calculated Partition KPIs")
@@ -416,15 +475,25 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
 
     assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
 
+    if saved_partition_to_s3 == 0:
+        s3_url_data = requests.get(json_response['s3_presigned_url'])
+        assert s3_url_data.status_code == 200
+        s3_url_data_json = s3_url_data.json()
+    
+        assert 'partition' in s3_url_data_json['body'], "Response: \n{0}".format(s3_url_data_json)
+        assert s3_url_data_json['body']['message'] == "Successfully generated a partition", \
+            "Response: \n{0}".format(s3_url_data_json)
+
     ## Sleep for 10 minutes and 5 seconds to ensure s3 URL is dead.
     if short is False:
         sleep((60 * 10) + 5)
         s3_url_data = requests.get(json_response['s3_presigned_url'])
         assert s3_url_data.status_code == 403
 
-@pytest.mark.functionality
-@pytest.mark.smoke
+
 @pytest.mark.v1alpha1_tests
+@pytest.mark.skipif(params.global_api != 'v1alpha1', reason="Not supported in api version: {0}".format(
+    params.global_api))
 def test_plans_get_response_kpi_validation(env, api, auth, level):
     """
         Test to verify the kpi fields are correct in a plans get by id response. We will be validating the key exists,
