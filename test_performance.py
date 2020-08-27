@@ -196,7 +196,7 @@ def test_plans_post_performance(env, api, auth, level):
             assert response.status_code == 200
             json_response = response.json()
 
-    print("Starting Test")
+    print("\n\nStarting Test")
 
     payload = deepcopy(params.payload)
     payload['field']['boundary']['boundary'] = params.three_hundred_acre_field
@@ -208,7 +208,7 @@ def test_plans_post_performance(env, api, auth, level):
                                                                    payload['field']['boundary']['boundary'][3])
 
     payload = json.dumps(payload)
-    print("\nPayload: {0}".format(payload))
+    print("Payload: {0}".format(payload))
 
     # Send a single file to get a baseline.
     response = plans_post_payload(env, api, auth, level, payload)
@@ -216,6 +216,7 @@ def test_plans_post_performance(env, api, auth, level):
     json_response = response.json()
 
     plan_id = json_response['plan_id']
+    print("Base Plan ID: {0}".format(plan_id))
 
     response = plans_get_by_id(env, api, auth, level, plan_id)
     assert response.status_code == 200
@@ -234,7 +235,7 @@ def test_plans_post_performance(env, api, auth, level):
     s3_url_data_initial = requests.get(json_response['s3_presigned_url'])
     assert s3_url_data_initial.status_code == 200
     s3_url_data_initial = s3_url_data_initial.json()
-    s3_body_baseline = s3_url_data_initial['body']['partition']
+    s3_body_baseline = json.dumps(s3_url_data_initial['body']['partition'], sort_keys=True)
 
     # Calculate delta time.
     delta_time_format = '%Y-%m-%d %H:%M:%S.%f'
@@ -284,7 +285,7 @@ def test_plans_post_performance(env, api, auth, level):
         assert s3_url_data.status_code == 200
         s3_url_data = s3_url_data.json()
 
-        if s3_body_baseline != s3_url_data['body']['partition']:
+        if s3_body_baseline != json.dumps(s3_url_data['body']['partition'], sort_keys=True):
             list_missed_compare_id.append(plan_id)
 
         # Store off time delta
