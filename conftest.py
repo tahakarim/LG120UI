@@ -17,7 +17,7 @@ def pytest_addoption(parser):
 
     parser.addoption("--env", action="store", default="stg", dest="env",
                      choices=['dev', 'stg', 'prod'])
-    parser.addoption("--api", action="store", default="v1alpha1", dest="api",
+    parser.addoption("--api", action="store", default="v1beta1", dest="api",
                      choices=['v1alpha1', 'v1beta1'])
     parser.addoption("--auth", action="store", default="aaat", dest="auth",
                      choices=['aaa', 'aaat'])
