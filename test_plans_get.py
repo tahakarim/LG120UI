@@ -1,7 +1,6 @@
 import json
 import logging
 import pytest
-import random
 import params
 import requests
 from plans_endpoint import plans_get, plans_get_by_id, plans_get_status, plans_post_payload
@@ -105,6 +104,24 @@ def test_plans_get_response_at_least_one_plan_id_returned(env, api, auth, level)
     assert len(json_response) >= 1
 
 
+@pytest.mark.skipif(params.global_api == 'v1alpha1', reason="Not supported in api version: {0}".format(
+    params.global_api))
+@pytest.mark.exception
+def test_plans_get_deprecation_failure(env, api, auth, level):
+    """
+    Test to verify GET/plans returns a 400 after v1alpha1.
+
+    return: None
+    """
+
+    logger = logging.getLogger('api_testing')
+    logger.setLevel(level)
+
+    response = plans_get(env, api, auth, level)
+
+    assert response.status_code == 404
+
+
 @pytest.mark.functionality
 @pytest.mark.smoke
 @pytest.mark.v1alpha1_tests
@@ -185,7 +202,6 @@ def test_plans_get_status_response_validation(env, api, auth, level):
     assert json_response['updated_date'] == status_updated_date
 
 
-
 @pytest.mark.exception
 def test_plans_get_status_invalid_guid_id(env, api, auth, level):
     """
@@ -226,6 +242,21 @@ def test_plans_get_status_no_id(env, api, auth, level):
     # in the URL.  Using this method, we will end up with /plans/status
     plan_id = "status"
     response = plans_get_by_id(env, api, auth, level, plan_id)
+
+    # Left in on purpose
+    print("\n" + response.url)
+
+    assert response.status_code == 400
+
+@pytest.mark.exception
+def test_plans_get_status_empty_id(env, api, auth, level):
+    """
+    Test to validate that we get an error when passing an empty ID to GET/plans/status
+
+    return: None
+    """
+    plan_id = ""
+    response = plans_get_status(env, api, auth, level, plan_id)
 
     # Left in on purpose
     print("\n" + response.url)
