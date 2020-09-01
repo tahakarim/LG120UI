@@ -69,14 +69,8 @@ def test_plans_get_by_id_response_performance(env, api, auth, level):
     iterations = 100
     response_time_list = []
 
-    response = plans_get(env, api, auth, level)
-    json_response = response.json()
-
-    ## Grab a random ID
-    plan_id = random.choice(json_response)['plan_id']
-
     while count <= iterations:
-        response = plans_get_by_id(env, api, auth, level, plan_id)
+        response = plans_get_by_id(env, api, auth, level, params.test_plan_id)
 
         # converting total_seconds to milliseconds and truncating decimal
         response_time_list.append(int(response.elapsed.total_seconds() * 1000))
@@ -118,14 +112,8 @@ def test_plans_get_status_response_performance(env, api, auth, level):
     iterations = 100
     response_time_list = []
 
-    response = plans_get(env, api, auth, level)
-    json_response = response.json()
-
-    ## Grab a random ID
-    plan_id = random.choice(json_response)['plan_id']
-
     while count <= iterations:
-        response = plans_get_status(env, api, auth, level, plan_id)
+        response = plans_get_status(env, api, auth, level, params.test_plan_id)
 
         # converting total_seconds to milliseconds and truncating decimal
         response_time_list.append(int(response.elapsed.total_seconds() * 1000))
