@@ -64,6 +64,11 @@ def test_plans_get_by_id_response_performance(env, api, auth, level):
 
     return: None
     """
+    # This for loop is for spinning up the Lambdas to get accurate performance results
+    for i in range(15):
+
+        response = plans_get_by_id(env, api, auth, level, params.test_plan_id)
+        assert response.status_code == 200
 
     count = 1
     iterations = 100
@@ -76,12 +81,6 @@ def test_plans_get_by_id_response_performance(env, api, auth, level):
         response_time_list.append(int(response.elapsed.total_seconds() * 1000))
         count += 1
 
-    print("\nMinimum: {0}".format(min(response_time_list)))
-    print("Maximum: {0}".format(max(response_time_list)))
-    print("Average: {0}".format((sum(response_time_list) / len(response_time_list))))
-    print(" Median: {0}".format(median(response_time_list)))
-    print(" StdDev: {0:.2f}".format(stdev(response_time_list)))
-
     test_data = "Response Time Performance Data for GET /plans by ID:\nMinimum: {0}\nMaximum: {1}\nAverage: {2}" \
                 "\n Median: {3}\n StdDev: {4:.2f}\nCount 0 to 199:  {5} -- Count 200 to 399:  {6} -- Count 400 to " \
                 "599:  {7} -- Count 600 to 999:  {8} -- Count 1000+:  {9}".format(
@@ -91,6 +90,7 @@ def test_plans_get_by_id_response_performance(env, api, auth, level):
         sum(1 for i in response_time_list if 600 <= i <= 999), sum(1 for i in response_time_list if i >= 1000))
 
     print(test_data)
+    print(response_time_list)
 
     post_message_to_slack(test_data, level)
 
@@ -107,6 +107,10 @@ def test_plans_get_status_response_performance(env, api, auth, level):
 
     return: None
     """
+    # This for loop is for spinning up the Lambdas to get accurate performance results
+    for i in range(15):
+        response = plans_get_status(env, api, auth, level, params.test_plan_id)
+        assert response.status_code == 200
 
     count = 1
     iterations = 100
@@ -119,12 +123,6 @@ def test_plans_get_status_response_performance(env, api, auth, level):
         response_time_list.append(int(response.elapsed.total_seconds() * 1000))
         count += 1
 
-    print("\nMinimum: {0}".format(min(response_time_list)))
-    print("Maximum: {0}".format(max(response_time_list)))
-    print("Average: {0}".format((sum(response_time_list) / len(response_time_list))))
-    print(" Median: {0}".format(median(response_time_list)))
-    print(" StdDev: {0:.2f}".format(stdev(response_time_list)))
-
     test_data = "Response Time Performance Data for GET /plans STATUS:\nMinimum: {0}\nMaximum: {1}\nAverage: {2}" \
                 "\n Median: {3}\n StdDev: {4:.2f}\nCount 0 to 199:  {5} -- Count 200 to 399:  {6} -- Count 400 to " \
                 "599:  {7} -- Count 600 to 999:  {8} -- Count 1000+:  {9}".format(
@@ -134,6 +132,7 @@ def test_plans_get_status_response_performance(env, api, auth, level):
         sum(1 for i in response_time_list if 600 <= i <= 999), sum(1 for i in response_time_list if i >= 1000))
 
     print(test_data)
+    print(response_time_list)
 
     post_message_to_slack(test_data, level)
 

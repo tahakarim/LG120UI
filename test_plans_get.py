@@ -119,7 +119,7 @@ def test_plans_get_deprecation_failure(env, api, auth, level):
 
     response = plans_get(env, api, auth, level)
 
-    assert response.status_code == 404
+    assert response.status_code == 403
 
 
 @pytest.mark.functionality
@@ -404,7 +404,6 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
             status_updated_date = json_response['status']['updated_date']
             assert json_response['status']['has_error'] is False
             assert json_response['status']['is_complete'] is False
-            assert 's3_presigned_url' not in json_response, "Response: \n{0}".format(json_response)
             saving_partition_validated = 1
             print("Step: Saving partition")
             sleep_counter = 0
@@ -425,7 +424,7 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
             # Validate no extra fields in response
             assert len(json_response) == 6
 
-            ## Verify the signed URL
+            # Verify the signed URL
             s3_url_data = requests.get(json_response['s3_presigned_url'])
             assert s3_url_data.status_code == 200
             s3_url_data_json = s3_url_data.json()
