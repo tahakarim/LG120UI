@@ -16,10 +16,10 @@ def test_swagger_response_validation(env, api, auth, level):
 
     if env == 'stg':
         golden_v1alpha1_swagger['host'] = golden_v1alpha1_swagger['host'].replace('dev', 'stg', 1)
-        # golden_v1beta1_swagger['host'] = golden_v1beta1_swagger['host'].replace('dev', 'stg', 1)
+        golden_v1beta1_swagger['host'] = golden_v1beta1_swagger['host'].replace('dev', 'stg', 1)
     elif env == 'prod':
         golden_v1alpha1_swagger['host'] = golden_v1alpha1_swagger['host'].replace('dev.', '', 1)
-        # golden_v1beta1_swagger['host'] = golden_v1beta1_swagger['host'].replace('dev.', '', 1)
+        golden_v1beta1_swagger['host'] = golden_v1beta1_swagger['host'].replace('dev.', '', 1)
 
     response = get_swagger(env, api, auth, level)
     assert response.status_code == 200
