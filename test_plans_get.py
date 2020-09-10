@@ -8,102 +8,6 @@ from copy import deepcopy
 from time import sleep
 
 
-@pytest.mark.skipif(params.global_api != 'v1alpha1', reason="Not supported in api version: {0}".format(
-    params.global_api))
-@pytest.mark.v1alpha1_tests
-def test_plans_get_response_validation(env, api, auth, level):
-    """
-    Test to verify the fields are correct in a plans get response. We will be validating the key exists,
-    not NULL and correct type.
-
-    return: None
-    """
-
-    response = plans_get(env, api, auth, level)
-    json_response = response.json()
-
-    assert response.status_code == 200
-
-    for item in json_response:
-
-        assert 'plan_id' in item, "Response: \n{0}".format(item)
-        assert isinstance(item['plan_id'], str), "Response: \n{0}".format(item)
-        assert item['plan_id'] is not None, "Response: \n{0}".format(item)
-
-        assert 'field_id' in item, "Response: \n{0}".format(item)
-        assert isinstance(item['field_id'], str), "Response: \n{0}".format(item)
-        assert item['field_id'] is not None, "Response: \n{0}".format(item)
-
-        assert 'created_date' in item, "Response: \n{0}".format(item)
-        assert isinstance(item['created_date'], str), "Response: \n{0}".format(item)
-        assert item['created_date'] is not None, "Response: \n{0}".format(item)
-
-        assert 'updated_date' in item, "Response: \n{0}".format(item)
-        assert isinstance(item['updated_date'], str), "Response: \n{0}".format(item)
-        assert item['updated_date'] is not None, "Response: \n{0}".format(item)
-
-        assert 'is_complete' in item['status'], "Response: \n{0}".format(item)
-        assert isinstance(item['status']['is_complete'], bool), "Response: \n{0}".format(item)
-        assert item['status']['is_complete'] is not None, "Response: \n{0}".format(item)
-
-        assert 'updated_date' in item['status'], "Response: \n{0}".format(item)
-        assert isinstance(item['status']['updated_date'], str), "Response: \n{0}".format(item)
-        assert item['status']['updated_date'] is not None, "Response: \n{0}".format(item)
-
-        assert 'step_name' in item['status'], "Response: \n{0}".format(item)
-        assert isinstance(item['status']['step_name'], str), "Response: \n{0}".format(item)
-        assert item['status']['step_name'] is not None, "Response: \n{0}".format(item)
-
-        assert 'has_error' in item['status'], "Response: \n{0}".format(item)
-        assert isinstance(item['status']['has_error'], bool), "Response: \n{0}".format(item)
-        assert item['status']['has_error'] is not None, "Response: \n{0}".format(item)
-
-        if 's3_presigned_url' in item:
-            assert 's3_presigned_url' in item, "Response: \n{0}".format(item)
-            assert isinstance(item['s3_presigned_url'], str), "Response: \n{0}".format(item)
-            assert item['s3_presigned_url'] is not None, "Response: \n{0}".format(item)
-
-            # Validate no extra fields in response
-            assert len(item) == 6
-
-        else:
-            # Validate no extra fields in response
-            assert len(item) == 5
-
-        # Validate no extra fields in status part of response
-        if 'message' in item['status']:
-            assert 'message' in item['status'], "Response: \n{0}".format(item)
-            assert isinstance(item['status']['message'], str), "Response: \n{0}".format(item)
-            assert item['status']['message'] == "An error has occurred in the workflow while generating a route for " \
-                                                "the requested field. The workflow has been updated accordingly and " \
-                                                "the process terminated", "Response: \n{0}".format(item)
-            assert len(item['status']) == 5
-        else:
-            assert len(item['status']) == 4
-
-
-@pytest.mark.skipif(params.global_api != 'v1alpha1', reason="Not supported in api version: {0}".format(
-    params.global_api))
-@pytest.mark.v1alpha1_tests
-def test_plans_get_response_at_least_one_plan_id_returned(env, api, auth, level):
-    """
-    Test to verify at least one plan id is returned from GET/plans.
-
-    return: None
-    """
-
-    logger = logging.getLogger('api_testing')
-    logger.setLevel(level)
-
-    response = plans_get(env, api, auth, level)
-    json_response = response.json()
-
-    logger.info("Response Length: {0}".format(len(json_response)))
-
-    assert response.status_code == 200
-    assert len(json_response) >= 1
-
-
 @pytest.mark.skipif(params.global_api == 'v1alpha1', reason="Not supported in api version: {0}".format(
     params.global_api))
 @pytest.mark.exception
@@ -124,7 +28,6 @@ def test_plans_get_deprecation_failure(env, api, auth, level):
 
 @pytest.mark.functionality
 @pytest.mark.smoke
-@pytest.mark.v1alpha1_tests
 def test_plans_get_by_id_response_validation(env, api, auth, level):
     """
     Test to validate that we are returning one status and that it is the correct status
@@ -174,7 +77,6 @@ def test_plans_get_by_id_non_guid_id(env, api, auth, level):
 
 @pytest.mark.functionality
 @pytest.mark.smoke
-@pytest.mark.v1alpha1_tests
 def test_plans_get_status_response_validation(env, api, auth, level):
     """
     Test to validate that we are returning one status and that it is the correct status
@@ -266,7 +168,6 @@ def test_plans_get_status_empty_id(env, api, auth, level):
 
 @pytest.mark.functionality
 @pytest.mark.smoke
-@pytest.mark.v1alpha1_tests
 def test_plans_get_response_data_validation(env, api, auth, level, short):
     """
     Test to validate that the stepname is updated correctly.
@@ -468,14 +369,13 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
             assert json_response['kpis'] is not None, "Response: \n{0}".format(json_response)
 
             kpis = json_response['kpis']
-
-            assert kpis[0]['name'] == "wayline_count", "Response: \n{0}".format(kpis[0]['name'])
-            assert kpis[1]['name'] == "headland_area", "Response: \n{0}".format(kpis[1]['name'])
-            assert kpis[2]['name'] == "primary_area", "Response: \n{0}".format(kpis[2]['name'])
+            kpi_names = ['total_wayline_length', 'wayline_count', 'total_area', 'headland_area', 'overlapped_area',
+                         'primary_area', 'perimeter', 'uncovered_area', 'covered_area']
+            kpi_units_name = ['metres', 'square metres']
 
             for kpi in kpis:
-                assert isinstance(kpi['name'], str), "Response: \n{0}".format(kpi)
-                assert kpi['name'] is not None, "Response: \n{0}".format(kpi)
+                assert kpi['name'] in kpi_names, "Response: \n{0}".format(kpi)
+                kpi_names.remove(kpi['name'])
 
                 assert 'result' in kpi, "Response: \n{0}".format(kpi)
                 assert isinstance(kpi['result'], dict), "Response: \n{0}".format(kpi)
@@ -487,11 +387,12 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
                 assert isinstance(result['value'], str), "Response: \n{0}".format(result)
                 assert result['value'] is not None, "Response: \n{0}".format(result)
 
-                if 'unit' in result:
+                if kpi['name'] != 'wayline_count':
                     assert isinstance(result['unit'], str), "Response: \n{0}".format(result)
-                    assert result['unit'] is not None, "Response: \n{0}".format(result)
+                    assert result['unit'] in kpi_units_name, "Response: \n{0}".format(result)
 
-            assert len(kpis) == 3
+            assert len(kpis) == 9, "Response: \n{0}".format(result)
+            assert len(kpi_names) == 0, "Response: \n{0}".format(result)
 
             calculated_partition_kpis = 1
             print("Step: Calculated Partition KPIs")
@@ -521,48 +422,4 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
         assert s3_url_data.status_code == 403
 
 
-@pytest.mark.v1alpha1_tests
-@pytest.mark.skipif(params.global_api != 'v1alpha1', reason="Not supported in api version: {0}".format(
-    params.global_api))
-def test_plans_get_response_kpi_validation(env, api, auth, level):
-    """
-        Test to verify the kpi fields are correct in a plans get by id response. We will be validating the key exists,
-        not NULL and correct type.
 
-        return: None
-        """
-
-    response = plans_get_by_id(env, api, auth, level, params.test_plan_id)
-    json_response = response.json()
-
-    assert response.status_code == 200
-
-    assert 'kpis' in json_response, "Response: \n{0}".format(json_response)
-    assert isinstance(json_response['kpis'], list), "Response: \n{0}".format(json_response)
-    assert json_response['kpis'] is not None, "Response: \n{0}".format(json_response)
-
-    kpis = json_response['kpis']
-
-    assert kpis[0]['name'] == "wayline_count", "Response: \n{0}".format(kpis[0]['name'])
-    assert kpis[1]['name'] == "headland_area", "Response: \n{0}".format(kpis[1]['name'])
-    assert kpis[2]['name'] == "primary_area", "Response: \n{0}".format(kpis[2]['name'])
-
-    for kpi in kpis:
-        assert isinstance(kpi['name'], str), "Response: \n{0}".format(kpi)
-        assert kpi['name'] is not None, "Response: \n{0}".format(kpi)
-
-        assert 'result' in kpi, "Response: \n{0}".format(kpi)
-        assert isinstance(kpi['result'], dict), "Response: \n{0}".format(kpi)
-        assert kpi['result'] is not None, "Response: \n{0}".format(kpi)
-
-        result = kpi['result']
-
-        assert 'value' in result, "Response: \n{0}".format(result)
-        assert isinstance(result['value'], str), "Response: \n{0}".format(result)
-        assert result['value'] is not None, "Response: \n{0}".format(result)
-
-        if 'unit' in result:
-            assert isinstance(result['unit'], str), "Response: \n{0}".format(result)
-            assert result['unit'] is not None, "Response: \n{0}".format(result)
-
-    assert len(kpis) == 3
