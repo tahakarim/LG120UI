@@ -1,60 +1,15 @@
 import json
 import logging
 import pytest
-import random
 import params
 import helpers
 import requests
 from datetime import datetime
-from plans_endpoint import plans_get, plans_get_by_id, plans_get_status, plans_post_payload
+from plans_endpoint import plans_get_by_id, plans_get_status, plans_post_payload
 from statistics import median, stdev
 from slack import post_message_to_slack
 from copy import deepcopy
 from time import sleep
-
-
-@pytest.mark.skipif(params.global_api != 'v1alpha1', reason="Not supported in api version: {0}".format(
-    params.global_api))
-def test_plans_get_response_performance(env, api, auth, level):
-    """
-    Test to validate the response time of GET /plans over multiple iterations.
-
-    return: None
-    """
-
-    count = 1
-    iterations = 100
-    response_time_list = []
-
-    while count <= iterations:
-        response = plans_get(env, api, auth, level)
-
-        # converting total_seconds to milliseconds and truncating decimal
-        response_time_list.append(int(response.elapsed.total_seconds() * 1000))
-        count += 1
-
-    print("\nMinimum: {0}".format(min(response_time_list)))
-    print("Maximum: {0}".format(max(response_time_list)))
-    print("Average: {0}".format((sum(response_time_list) / len(response_time_list))))
-    print(" Median: {0}".format(median(response_time_list)))
-    print(" StdDev: {0:.2f}".format(stdev(response_time_list)))
-
-    test_data = "Response Time Performance Data for GET /plans:\nMinimum: {0}\nMaximum: {1}\nAverage: {2}" \
-                "\n Median: {3}\n StdDev: {4:.2f}\nCount 0 to 199:  {5} -- Count 200 to 399:  {6} -- Count 400 to " \
-                "599:  {7} -- Count 600 to 999:  {8} -- Count 1000+:  {9}".format(
-        min(response_time_list), max(response_time_list), sum(response_time_list) / len(response_time_list),
-        median(response_time_list), stdev(response_time_list), sum(1 for i in response_time_list if 0 < i <= 199),
-        sum(1 for i in response_time_list if 200 <= i <= 399), sum(1 for i in response_time_list if 400 <= i <= 599),
-        sum(1 for i in response_time_list if 600 <= i <= 999), sum(1 for i in response_time_list if i >= 1000))
-
-    print(test_data)
-
-    post_message_to_slack(test_data, level)
-
-    logger = logging.getLogger('api_testing')
-    logger.setLevel(level)
-
-    logger.debug(response_time_list)
 
 
 @pytest.mark.performance
