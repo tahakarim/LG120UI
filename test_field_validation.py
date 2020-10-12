@@ -16,12 +16,12 @@ def test_plans_gate_not_connected_to_field(env, api, auth, level):
     return: None
     """
 
-    payload = deepcopy(params.payload)
+    payload = deepcopy(params.payload_optional)
     payload['field']['gates'][0]['point']['lat'] = -10.450962
     payload['field']['gates'][0]['point']['lng'] = 105.691082
     payload = json.dumps(payload)
     print("\nPayload: {0}".format(payload))
-
+    print(auth)
     response = plans_post_payload(env, api, auth, level, payload)
     assert response.status_code == 200
     json_response = response.json()
@@ -60,18 +60,18 @@ def test_plans_gate_not_connected_to_field(env, api, auth, level):
 
 
 @pytest.mark.exception
-def test_plans_row_direction_multiple_lat_long_keys(env, api, auth, level):
+def test_plans_unoptimized_wayline_multiple_lat_long_keys(env, api, auth, level):
     """
-    Test to validate that a failure is returned when the row_direction has 3 lat/lng pairs.
+    Test to validate that a failure is returned when the unoptimized_wayline has 3 lat/lng pairs.
 
     return: None
     """
 
-    payload = deepcopy(params.payload)
-    payload['row_direction'].append({"lat": 0.0010183, "lng": -0.0001983})
+    payload = deepcopy(params.payload_optional)
+    payload['unoptimized_wayline'].append({"lat": 0.0010183, "lng": -0.0001983})
     payload = json.dumps(payload)
     print("\nPayload: {0}".format(payload))
-
+    print(auth)
     response = plans_post_payload(env, api, auth, level, payload)
     assert response.status_code == 200
     json_response = response.json()
@@ -116,19 +116,19 @@ def test_plans_field_validation_indiana(env, api, auth, level):
     payload = deepcopy(params.payload)
 
     payload['field']['boundary']['boundary'] = params.indiana
-    payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
-                                                                       payload['field']['boundary']['boundary'][2])
+    # payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
+    #                                                                    payload['field']['boundary']['boundary'][2])
 
-    payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
-                                                                   payload['field']['boundary']['boundary'][2])
-    payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
-                                                                   payload['field']['boundary']['boundary'][3])
+    # payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
+    #                                                                payload['field']['boundary']['boundary'][2])
+    # payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
+    #                                                                payload['field']['boundary']['boundary'][3])
 
-    payload['field']['soil_type'] = helpers.helper_random_soiltype()
+    # payload['field']['soil_type'] = helpers.helper_random_soiltype()
     payload = json.dumps(payload)
 
     print("\nPayload: {0}".format(payload))
-
+    print(auth)
     response = plans_post_payload(env, api, auth, level, payload)
 
     assert response.status_code == 200
@@ -179,13 +179,13 @@ def test_plans_field_validation_quarter_circle(env, api, auth, level):
 
     payload['field']['boundary']['boundary'] = params.quarter_circle_field
 
-    payload['field']['gates'][0]['point'] = random.choice(params.quarter_circle_field)
-
-    payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.399534},
-                                                                   {'lat': 37.794469, 'lng': -97.403632})
-    payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.403632},
-                                                                   {'lat': 37.794469, 'lng': -97.399534})
-    payload['field']['soil_type'] = helpers.helper_random_soiltype()
+    # payload['field']['gates'][0]['point'] = random.choice(params.quarter_circle_field)
+    #
+    # payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.399534},
+    #                                                                {'lat': 37.794469, 'lng': -97.403632})
+    # payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.403632},
+    #                                                                {'lat': 37.794469, 'lng': -97.399534})
+    # payload['field']['soil_type'] = helpers.helper_random_soiltype()
 
     payload = json.dumps(payload)
 
@@ -383,13 +383,13 @@ def test_plans_lat_lng_invalid_values(env, api, auth, level):
 
     return: None
     """
-    row_payload = deepcopy(params.payload)
-    boundary_payload = deepcopy(params.payload)
-    gates_payload = deepcopy(params.payload)
-    obstacles_payload = deepcopy(params.payload)
+    row_payload = deepcopy(params.payload_optional)
+    boundary_payload = deepcopy(params.payload_optional)
+    gates_payload = deepcopy(params.payload_optional)
+    obstacles_payload = deepcopy(params.payload_optional)
     invalid_lat_lng = [-91.0, 91.0, -181.0, 181.0]
     random.shuffle(invalid_lat_lng)
-    json_fields = ['row_direction', 'boundary', 'gates']  # Need to add 'obstacles' into list.
+    json_fields = ['unoptimized_wayline', 'boundary', 'gates']  # Need to add 'obstacles' into list.
     random.shuffle(json_fields)
     lat_or_lng = ['lat', 'lng']
 
@@ -398,8 +398,8 @@ def test_plans_lat_lng_invalid_values(env, api, auth, level):
         invalid_lat_or_lng = invalid_lat_lng.pop()
         tmp_lat_or_lng = random.choice(lat_or_lng)
 
-        if field == 'row_direction':
-            row_payload['row_direction'][0][tmp_lat_or_lng] = invalid_lat_or_lng
+        if field == 'unoptimized_wayline':
+            row_payload['unoptimized_wayline'][0][tmp_lat_or_lng] = invalid_lat_or_lng
             row_payload = json.dumps(row_payload)
 
         elif field == 'boundary':
@@ -464,13 +464,13 @@ def test_plans_field_validation_half_circle(env, api, auth, level):
 
     payload['field']['boundary']['boundary'] = params.half_circle_field
 
-    payload['field']['gates'][0]['point'] = random.choice(params.half_circle_field)
-
-    payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.818026, 'lng': -97.404255},
-                                                                   {'lat': 37.818026, 'lng': -97.399223})
-    payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.820864, 'lng': -97.399223},
-                                                                   {'lat': 37.820864, 'lng': -97.404255})
-    payload['field']['soil_type'] = helpers.helper_random_soiltype()
+    # payload['field']['gates'][0]['point'] = random.choice(params.half_circle_field)
+    #
+    # payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.818026, 'lng': -97.404255},
+    #                                                                {'lat': 37.818026, 'lng': -97.399223})
+    # payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.820864, 'lng': -97.399223},
+    #                                                                {'lat': 37.820864, 'lng': -97.404255})
+    # payload['field']['soil_type'] = helpers.helper_random_soiltype()
     payload = json.dumps(payload)
 
     print("\nPayload: {0}".format(payload))
@@ -523,13 +523,13 @@ def test_plans_field_validation_full_circle(env, api, auth, level):
 
     payload['field']['boundary']['boundary'] = params.circle_feild
 
-    payload['field']['gates'][0]['point'] = random.choice(params.circle_feild)
-
-    payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 34.964350, 'lng': -114.655483},
-                                                                   {'lat': 34.964350, 'lng': -114.654096})
-    payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 34.962717, 'lng': -114.654096},
-                                                                   {'lat': 34.962717, 'lng': -114.655483})
-    payload['field']['soil_type'] = helpers.helper_random_soiltype()
+    # payload['field']['gates'][0]['point'] = random.choice(params.circle_feild)
+    #
+    # payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 34.964350, 'lng': -114.655483},
+    #                                                                {'lat': 34.964350, 'lng': -114.654096})
+    # payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 34.962717, 'lng': -114.654096},
+    #                                                                {'lat': 34.962717, 'lng': -114.655483})
+    # payload['field']['soil_type'] = helpers.helper_random_soiltype()
     payload = json.dumps(payload)
 
     print("\nPayload: {0}".format(payload))
@@ -581,18 +581,18 @@ def test_plans_field_validation_marktoberdorf(env, api, auth, level):
     payload = deepcopy(params.payload)
 
     payload['field']['boundary']['boundary'] = params.marktoberdorf_test_field
-
-    payload['field']['gates'][0]['point']['lat'] = 47.783987
-    payload['field']['gates'][0]['point']['lng'] = 10.606438
-
-    payload['row_direction'] = [
-        {
-            "lat": 47.784394, "lng": 10.607035
-        },
-        {
-            "lat": 47.783987, "lng": 10.606438
-        }
-    ]
+    #
+    # payload['field']['gates'][0]['point']['lat'] = 47.783987
+    # payload['field']['gates'][0]['point']['lng'] = 10.606438
+    #
+    # payload['row_direction'] = [
+    #     {
+    #         "lat": 47.784394, "lng": 10.607035
+    #     },
+    #     {
+    #         "lat": 47.783987, "lng": 10.606438
+    #     }
+    # ]
 
     payload = json.dumps(payload)
 
@@ -645,12 +645,12 @@ def test_plans_field_validation_millennium_park(env, api, auth, level):
     payload = deepcopy(params.payload)
 
     payload['field']['boundary']['boundary'] = params.millennium_park_test_field
-    payload['field']['gates'][0]['point'] = random.choice(params.millennium_park_test_field)
-    payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 41.876887, 'lng': -87.620123},
-                                                                   {'lat': 41.874713, 'lng': -87.617830})
-    payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 41.876914, 'lng': -87.617892},
-                                                                   {'lat': 41.874685, 'lng': -87.620076})
-    payload['field']['soil_type'] = helpers.helper_random_soiltype()
+    # payload['field']['gates'][0]['point'] = random.choice(params.millennium_park_test_field)
+    # payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 41.876887, 'lng': -87.620123},
+    #                                                                {'lat': 41.874713, 'lng': -87.617830})
+    # payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 41.876914, 'lng': -87.617892},
+    #                                                                {'lat': 41.874685, 'lng': -87.620076})
+    # payload['field']['soil_type'] = helpers.helper_random_soiltype()
 
     payload = json.dumps(payload)
 
@@ -709,69 +709,14 @@ def test_plans_field_validation_boundary_out_of_order_square(env, api, auth, lev
     payload['field']['boundary']['boundary'][1] = payload['field']['boundary']['boundary'][2]
     payload['field']['boundary']['boundary'][2] = temp_point_two
 
-    payload['field']['gates'][0]['point'] = random.choice(params.three_hundred_acre_field)
-
-    payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
-                                                                   payload['field']['boundary']['boundary'][2])
-    payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
-                                                                   payload['field']['boundary']['boundary'][3])
-
-    payload = json.dumps(payload)
-    print("\nPayload: {0}".format(payload))
-
-    response = plans_post_payload(env, api, auth, level, payload)
-    assert response.status_code == 200
-    json_response = response.json()
-
-    plan_id = json_response['plan_id']
-
-    # Send a GET /plans by ID
-    response = plans_get_by_id(env, api, auth, level, plan_id)
-    assert response.status_code == 200
-    json_response = response.json()
-
-    # 60 seconds * number of minutes.
-    max_sleep = (60 * 2) + 30
-    sleep_counter = 0
-
-    while json_response['status']['is_complete'] is False and sleep_counter <= max_sleep:
-        sleep(1)
-        response = plans_get_by_id(env, api, auth, level, plan_id)
-        json_response = response.json()
-        sleep_counter += 1
-
-    assert json_response['status']['step_name'] == params.last_step_name, "Response: \n{0}".format(json_response)
-    assert json_response['status']['has_error'] is False, "Response: \n{0}".format(json_response)
-
-    assert json_response['status']['is_complete'] is True, "Response: \n{0}".format(json_response)
-
-    if json_response['status']['has_error'] is True:
-        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
-                                                     "for the requested field. The workflow has been updated " \
-                                                     "accordingly and the process " \
-                                                     "terminated", "Response: \n{0}".format(json_response)
-
-    assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
-
-@pytest.mark.functionality
-def test_plans_field_validation_boundary_out_of_order_circle(env, api, auth, level):
-    """
-      Test to validate when you present a circle field with the boundaries shuffled.
-
-      return: None
-      """
-    payload = deepcopy(params.payload)
-
-    circle_field = deepcopy(params.circle_feild)
-    random.shuffle(circle_field)
-    payload['field']['boundary']['boundary'] = circle_field
-
-    payload['field']['gates'][0]['point'] = random.choice(params.circle_feild)
-    payload['row_direction'][0] = random.choice(params.circle_feild)
-    payload['row_direction'][1] = random.choice(params.circle_feild)
+    # payload['field']['gates'][0]['point'] = random.choice(params.three_hundred_acre_field)
+    #
+    # payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
+    #                                                                payload['field']['boundary']['boundary'][2])
+    # payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
+    #                                                                payload['field']['boundary']['boundary'][3])
 
     payload = json.dumps(payload)
-
     print("\nPayload: {0}".format(payload))
 
     response = plans_post_payload(env, api, auth, level, payload)

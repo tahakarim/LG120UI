@@ -849,6 +849,24 @@ def test_plans_post_field_id_key_value_missing(env, api, auth, level):
                                        "field_id is required, but none was provided."
 
 
+@pytest.mark.skip(reason="not in prod")
+def test_plans_post_implement_width_key_value_missing(env, api, auth, level):
+    """
+    Test to verify we receive a 400 status if implement_width data is missing
+
+    return: None
+    """
+    payload = deepcopy(params.payload)
+    del payload['implement_width']
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 400
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected parameter " \
+                                       "implement_width is required, but none was provided."
+
 @pytest.mark.exception
 def test_plans_post_payload_empty(env, api, auth, level):
     """
