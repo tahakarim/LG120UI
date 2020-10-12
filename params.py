@@ -8,6 +8,7 @@ payload = {
     "is_ctf": False,
     "headland_width_optimized": False,
     "headland_width": 18.1,
+    "implement_width": 10.0,
     "row_direction": [
         {
             "lat": 0.0012783, "lng": -0.0012783
@@ -25,6 +26,44 @@ payload = {
             "ramp_down_distance": 1
         }
     ],
+    "field": {
+        "boundary": {
+            "boundary": [
+                {
+                    "lat": 0.0012783, "lng": 0.0012783
+                },
+                {
+                    "lat": 0.0012783, "lng": -0.0012783
+                },
+                {
+                    "lat": -0.0012783, "lng": 0.0012783
+                },
+                {
+                    "lat": -0.0012783, "lng": -0.0012783
+                }
+            ]
+        },
+        "obstacles": [
+            # [
+            #     {
+            #         "lat": 0, "lng": 0
+            #     }
+            # ]
+        ],
+        "gates": [
+            {
+                "point": {
+                    "lat": -0.0012783, "lng": -0.0012783
+                }
+            }
+        ],
+        "soil_type": "Unknown"
+    }
+}
+
+payload_optional = {
+    "field_id": 12345,
+    "implement_width": 10.0,
     "field": {
         "boundary": {
             "boundary": [

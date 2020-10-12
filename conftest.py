@@ -18,9 +18,9 @@ def pytest_addoption(parser):
     parser.addoption("--env", action="store", default="stg", dest="env",
                      choices=['dev', 'stg', 'prod'])
     parser.addoption("--api", action="store", default="v1beta1", dest="api",
-                     choices=['v1alpha1', 'v1beta1'])
-    parser.addoption("--auth", action="store", default="aaat", dest="auth",
-                     choices=['aaa', 'aaat'])
+                     choices=['v1alpha1', 'v1beta1', 'v1beta2'])
+    parser.addoption("--auth", action="store", default='aaat', dest="auth",
+                     choices=['aaa', 'aaat', 'gigya'])
     parser.addoption("--level", action="store", default='INFO', dest="level",
                      choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'])
     parser.addoption("--short", action="store_true", default=False, dest="short")
@@ -84,4 +84,5 @@ def pytest_configure(config):
     if json_response['status']['has_error'] is False:
         params.test_plan_id = json_response['plan_id']
     else:
+        print(json_response)
         exit("Setup Failed")
