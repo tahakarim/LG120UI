@@ -22,7 +22,7 @@ def test_plans_get_response_data_validation_v1alpha1(env, api, auth, level, shor
 
     return: None
     """
-    payload = deepcopy(params.payload)
+    payload = deepcopy(params.payload_optional)
     ### Temp Code
     # payload = json.dumps(payload)
 
@@ -517,7 +517,7 @@ def test_plans_post_response_validation_v1alpha1(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(params.payload)
+    payload = deepcopy(params.payload_optional)
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)

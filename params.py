@@ -3,7 +3,7 @@ expier_time = None
 last_step_name = "Calculated Partition KPIs"
 test_plan_id = None
 global_api = None
-payload = {
+payload_optional = {
     "field_id": 12345,
     "is_ctf": False,
     "headland_width_optimized": False,
@@ -61,7 +61,7 @@ payload = {
     }
 }
 
-payload_optional = {
+payload = {
     "field_id": 12345,
     "implement_width": 10.0,
     "field": {
@@ -80,22 +80,7 @@ payload_optional = {
                     "lat": -0.0012783, "lng": -0.0012783
                 }
             ]
-        },
-        "obstacles": [
-            # [
-            #     {
-            #         "lat": 0, "lng": 0
-            #     }
-            # ]
-        ],
-        "gates": [
-            {
-                "point": {
-                    "lat": -0.0012783, "lng": -0.0012783
-                }
-            }
-        ],
-        "soil_type": "Unknown"
+        }
     }
 }
 
