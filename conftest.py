@@ -57,14 +57,19 @@ def pytest_configure(config):
     auth = config.getoption('auth')
     level = config.getoption('level')
     params.global_api = config.getoption('api')
-    payload = deepcopy(params.payload)
-    payload['field']['boundary']['boundary'] = params.quarter_circle_field
-    payload['field']['gates'][0]['point'] = random.choice(params.quarter_circle_field)
-    payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.399534},
-                                                                   {'lat': 37.794469, 'lng': -97.403632})
-    payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.403632},
-                                                                   {'lat': 37.794469, 'lng': -97.399534})
-    payload['field']['soil_type'] = helpers.helper_random_soiltype()
+    if api != 'v1beta2':
+        payload = deepcopy(params.payload_optional)
+        payload['field']['boundary']['boundary'] = params.quarter_circle_field
+        payload['field']['gates'][0]['point'] = random.choice(params.quarter_circle_field)
+        payload['row_direction'][0] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.399534},
+                                                                       {'lat': 37.794469, 'lng': -97.403632})
+        payload['row_direction'][1] = helpers.helper_random_fieldpoint({'lat': 37.792516, 'lng': -97.403632},
+                                                                       {'lat': 37.794469, 'lng': -97.399534})
+        payload['field']['soil_type'] = helpers.helper_random_soiltype()
+
+    else:
+        payload = deepcopy(params.payload)
+        payload['field']['boundary']['boundary'] = params.quarter_circle_field
 
     payload = json.dumps(payload)
 
