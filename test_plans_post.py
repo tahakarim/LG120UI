@@ -2,22 +2,50 @@ import json
 import pytest
 import params
 import helpers
-import random
-from plans_endpoint import plans_post_payload, plans_get_by_id
+from plans_endpoint import plans_post_payload
 from copy import deepcopy
-from time import sleep
 
 
 @pytest.mark.functionality
 @pytest.mark.smoke
-def test_plans_post_response_validation(env, api, auth, level):
+def test_plans_post_response_validation_required_fields(env, api, auth, level):
     """
-    Test to verify the fields are correct in a plans post response. We will be validating the key exists,
+    Test to verify all the required fields are correct in a plans post response. We will be validating the key exists,
     not NULL and correct type.
 
     return: None
     """
     payload = deepcopy(params.payload)
+    payload = json.dumps(payload)
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    json_response = response.json()
+
+    assert response.status_code == 200
+
+    assert 'plan_id' in json_response
+    if 'plan_id' in json_response:
+        id = json_response['plan_id']
+    assert isinstance(id, str)
+    assert id is not None
+
+    assert 'created_date' in json_response
+    if 'created_date' in json_response:
+        id = json_response['created_date']
+    assert isinstance(id, str)
+    assert id is not None
+
+
+@pytest.mark.functionality
+@pytest.mark.smoke
+def test_plans_post_response_validation_optional_fields(env, api, auth, level):
+    """
+    Test to verify all the optional fields are correct in a plans post response. We will be validating the key exists,
+    not NULL and correct type.
+
+    return: None
+    """
+    payload = deepcopy(params.payload_all_fields)
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
@@ -46,7 +74,7 @@ def test_plans_post_field_key_missing(env, api, auth, level):
     return: None
     """
 
-    payload = deepcopy(params.payload_all_fields)
+    payload = deepcopy(params.payload)
     del payload['field']
     payload = json.dumps(payload)
 
@@ -58,7 +86,6 @@ def test_plans_post_field_key_missing(env, api, auth, level):
                                        " required, but none was provided."
 
 
-
 @pytest.mark.exception
 def test_plans_post_field_id_key_missing(env, api, auth, level):
     """
@@ -66,8 +93,7 @@ def test_plans_post_field_id_key_missing(env, api, auth, level):
 
     return: None
     """
-    payload = deepcopy(params.payload_all_fields)
-    payload['field']['boundary']['boundary'] = params.quarter_circle_field
+    payload = deepcopy(params.payload)
     del payload['field_id']
     payload = json.dumps(payload)
 
@@ -216,123 +242,101 @@ def test_plans_post_field_boundary_boundary_lng_key_missing(env, api, auth, leve
                                        " boundary point parameter lng is required, but none was provided."
 
 
-
-@pytest.mark.exception
-def test_plans_post_initial_wayline_key_missing(env, api, auth, level):
-    """
-    Test to verify we receive a 400 status if the row_direction key is missing
-
-    return: None
-    """
-    payload = deepcopy(params.payload)
-    del payload['row_direction']
-    payload = json.dumps(payload)
-
-    response = plans_post_payload(env, api, auth, level, payload)
-    json_response = response.json()
-
-    assert response.status_code == 400
-    assert json_response['message'] == "Unable to create plan with invalid input: Expected parameter row_direction " \
-                                       "is required, but none was provided."
-
-
 @pytest.mark.exception
 def test_plans_post_initial_wayline_lat_null(env, api, auth, level):
     """
-    Test to verify we receive a 400 status if the row_direction lat value is null
+    Test to verify we receive a 400 status if the initial_wayline lat value is null
 
     return: None
     """
     null_lat = None
 
-    payload = deepcopy(params.payload)
-    payload['row_direction'][0]['lat'] = null_lat
+    payload = deepcopy(params.payload_all_fields)
+    payload['field']['initial_wayline'][0]['lat'] = null_lat
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
     json_response = response.json()
 
     assert response.status_code == 400
-    assert json_response["message"] == "Unable to create plan with invalid input: Expected row_direction" \
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected initial_wayline" \
                                        " parameter lat is required, but none was provided."
 
 
 @pytest.mark.exception
 def test_plans_post_initial_wayline_lng_null(env, api, auth, level):
     """
-    Test to verify we receive a 400 status if the row_direction lng value is null
+    Test to verify we receive a 400 status if the initial_wayline lng value is null
 
     return: None
     """
     null_lng = None
 
-    payload = deepcopy(params.payload)
-    payload['row_direction'][0]['lng'] = null_lng
+    payload = deepcopy(params.payload_all_fields)
+    payload['field']['initial_wayline'][0]['lng'] = null_lng
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
     json_response = response.json()
 
     assert response.status_code == 400
-    assert json_response["message"] == "Unable to create plan with invalid input: Expected row_direction " \
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected initial_wayline " \
                                        "parameter lng is required, but none was provided."
 
 
 @pytest.mark.exception
 def test_plans_post_initial_wayline_lat_key_missing(env, api, auth, level):
     """
-    Test to verify we receive a 400 status if the row_direction lat key is missing
+    Test to verify we receive a 400 status if the initial_wayline lat key is missing
 
     return: None
     """
-    payload = deepcopy(params.payload)
-    del payload['row_direction'][0]['lat']
+    payload = deepcopy(params.payload_all_fields)
+    del payload['field']['initial_wayline'][0]['lat']
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
     json_response = response.json()
 
     assert response.status_code == 400
-    assert json_response["message"] == "Unable to create plan with invalid input: Expected row_direction " \
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected initial_wayline " \
                                        "parameter lat is required, but none was provided."
 
 
 @pytest.mark.exception
 def test_plans_post_initial_wayline_lng_key_missing(env, api, auth, level):
     """
-    Test to verify we receive a 400 status if the row_direction lng key is missing
+    Test to verify we receive a 400 status if the initial_wayline lng key is missing
 
     return: None
     """
-    payload = deepcopy(params.payload)
-    del payload['row_direction'][0]['lng']
+    payload = deepcopy(params.payload_all_fields)
+    del payload['field']['initial_wayline'][0]['lng']
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
     json_response = response.json()
 
     assert response.status_code == 400
-    assert json_response["message"] == "Unable to create plan with invalid input: Expected row_direction" \
+    assert json_response["message"] == "Unable to create plan with invalid input: Expected initial_wayline" \
                                        " parameter lng is required, but none was provided."
 
 
 @pytest.mark.exception
 def test_plans_post_initial_wayline_lat_long_key_missing(env, api, auth, level):
     """
-    Test to verify we receive a 400 status if the row_direction payload is empty
+    Test to verify we receive a 400 status if the initial_wayline payload is empty
 
     return: None
     """
-    payload = deepcopy(params.payload)
-    payload['row_direction'] = []
+    payload = deepcopy(params.payload_all_fields)
+    payload['field']['initial_wayline'] = []
     payload = json.dumps(payload)
 
     response = plans_post_payload(env, api, auth, level, payload)
-    json_response = response.json()
 
-    assert response.status_code == 400
-    assert json_response["message"] == "Unable to create plan with invalid input: Expected parameter " \
-                                       "row_direction is required, but none was provided."
+    assert response.status_code == 200
+
 
 
 @pytest.mark.exception
@@ -398,14 +402,6 @@ def test_plans_post_field_boundary_in_dms_format(env, api, auth, level):
     """
     payload = deepcopy(params.payload)
     payload['field']['boundary']['boundary'] = deepcopy(params.three_hundred_acre_field)
-
-    payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
-                                                                       payload['field']['boundary']['boundary'][2])
-    payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
-                                                                   payload['field']['boundary']['boundary'][2])
-    payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
-                                                                   payload['field']['boundary']['boundary'][3])
-
     payload['field']['boundary']['boundary'][0]['lat'] = "37°45'50.7 N"
     payload['field']['boundary']['boundary'][0]['lng'] = "97°38'40.4 W"
 
@@ -423,14 +419,6 @@ def test_plans_post_field_boundary_in_dmm_format(env, api, auth, level):
     """
     payload = deepcopy(params.payload)
     payload['field']['boundary']['boundary'] = deepcopy(params.three_hundred_acre_field)
-
-    payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
-                                                                       payload['field']['boundary']['boundary'][2])
-    payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
-                                                                   payload['field']['boundary']['boundary'][2])
-    payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
-                                                                   payload['field']['boundary']['boundary'][3])
-
     payload['field']['boundary']['boundary'][0]['lat'] = "37°45.8445 N"
     payload['field']['boundary']['boundary'][0]['lng'] = "97°38.6734 W"
 
