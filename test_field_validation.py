@@ -2,7 +2,6 @@ import json
 import pytest
 import random
 import params
-import helpers
 from plans_endpoint import plans_get_by_id, plans_post_payload
 from copy import deepcopy
 from time import sleep
@@ -387,13 +386,13 @@ def test_plans_lat_lng_invalid_values(env, api, auth, level):
 
     return: None
     """
-    row_payload = deepcopy(params.payload_optional)
-    boundary_payload = deepcopy(params.payload_optional)
-    gates_payload = deepcopy(params.payload_optional)
-    obstacles_payload = deepcopy(params.payload_optional)
+    row_payload = deepcopy(params.payload_all_fields)
+    boundary_payload = deepcopy(params.payload_all_fields)
+    gates_payload = deepcopy(params.payload_all_fields)
+    obstacles_payload = deepcopy(params.payload_all_fields)
     invalid_lat_lng = [-91.0, 91.0, -181.0, 181.0]
     random.shuffle(invalid_lat_lng)
-    json_fields = ['unoptimized_wayline', 'boundary', 'gates']  # Need to add 'obstacles' into list.
+    json_fields = ['initial_wayline', 'boundary', 'gates']  # Need to add 'obstacles' into list.
     random.shuffle(json_fields)
     lat_or_lng = ['lat', 'lng']
 
@@ -402,8 +401,8 @@ def test_plans_lat_lng_invalid_values(env, api, auth, level):
         invalid_lat_or_lng = invalid_lat_lng.pop()
         tmp_lat_or_lng = random.choice(lat_or_lng)
 
-        if field == 'unoptimized_wayline':
-            row_payload['unoptimized_wayline'][0][tmp_lat_or_lng] = invalid_lat_or_lng
+        if field == 'initial_wayline':
+            row_payload['field']['initial_wayline'][0][tmp_lat_or_lng] = invalid_lat_or_lng
             row_payload = json.dumps(row_payload)
 
         elif field == 'boundary':
