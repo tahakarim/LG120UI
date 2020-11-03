@@ -16,7 +16,8 @@ def test_plans_gate_not_connected_to_field(env, api, auth, level):
     return: None
     """
 
-    payload = deepcopy(params.payload_optional)
+    payload = deepcopy(params.payload_all_fields)
+    payload['field']['boundary']['boundary'] = params.quarter_circle_field
     payload['field']['gates'][0]['point']['lat'] = -10.450962
     payload['field']['gates'][0]['point']['lng'] = 105.691082
     payload = json.dumps(payload)
@@ -60,16 +61,19 @@ def test_plans_gate_not_connected_to_field(env, api, auth, level):
 
 
 @pytest.mark.exception
-def test_plans_unoptimized_wayline_multiple_lat_long_keys(env, api, auth, level):
+def test_plans_initial_wayline_multiple_lat_long_keys(env, api, auth, level):
     """
-    Test to validate that a failure is returned when the unoptimized_wayline has 3 lat/lng pairs.
+    Test to validate that a failure is returned when the initial_wayline has 3 lat/lng pairs.
 
     return: None
     """
 
-    payload = deepcopy(params.payload_optional)
-    payload['unoptimized_wayline'].append({"lat": 0.0010183, "lng": -0.0001983})
+    payload = deepcopy(params.payload_all_fields)
+    payload['field']['boundary']['boundary'] = params.quarter_circle_field
+    payload['field']['initial_wayline'].append({"lat": 0.0010183, "lng": -0.0001983})
+    print(payload)
     payload = json.dumps(payload)
+
     print("\nPayload: {0}".format(payload))
     print(auth)
     response = plans_post_payload(env, api, auth, level, payload)
