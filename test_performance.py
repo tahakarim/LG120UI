@@ -108,12 +108,6 @@ def test_plans_post_performance(env, api, auth, level):
     for i in range(5):
         payload = deepcopy(params.payload)
         payload['field']['boundary']['boundary'] = params.three_hundred_acre_field
-        payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
-                                                                           payload['field']['boundary']['boundary'][2])
-        payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
-                                                                       payload['field']['boundary']['boundary'][2])
-        payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
-                                                                       payload['field']['boundary']['boundary'][3])
 
         payload = json.dumps(payload)
         response = plans_post_payload(env, api, auth, level, payload)
@@ -142,12 +136,6 @@ def test_plans_post_performance(env, api, auth, level):
 
     payload = deepcopy(params.payload)
     payload['field']['boundary']['boundary'] = params.three_hundred_acre_field
-    payload['field']['gates'][0]['point'] = helpers.helper_random_gate(payload['field']['boundary']['boundary'][0],
-                                                                       payload['field']['boundary']['boundary'][2])
-    payload['row_direction'][0] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][0],
-                                                                   payload['field']['boundary']['boundary'][2])
-    payload['row_direction'][1] = helpers.helper_random_fieldpoint(payload['field']['boundary']['boundary'][1],
-                                                                   payload['field']['boundary']['boundary'][3])
 
     payload = json.dumps(payload)
     print("Payload: {0}".format(payload))
