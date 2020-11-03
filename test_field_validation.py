@@ -757,3 +757,59 @@ def test_plans_field_validation_boundary_out_of_order_square(env, api, auth, lev
 
     assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
 
+
+@pytest.mark.functionality
+def test_plans_field_initial_wayline_single_value(env, api, auth, level):
+    """
+      Test to validate when you present a single value for initial_Wayline handled correctly
+
+      return: None
+      """
+
+    payload = deepcopy(params.payload)
+
+    payload['field']['boundary']['boundary'] = params.quarter_circle_field
+    payload['field']['initial_wayline'] = []
+    payload['field']['initial_wayline'].append(payload['field']['boundary']['boundary'][0])
+
+    payload = json.dumps(payload)
+
+    print("\nPayload: {0}".format(payload))
+
+    response = plans_post_payload(env, api, auth, level, payload)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    plan_id = json_response['plan_id']
+
+    # Send a GET /plans by ID
+    response = plans_get_by_id(env, api, auth, level, plan_id)
+    assert response.status_code == 200
+    json_response = response.json()
+
+    sleep_counter = 0
+    sleep_max_counter = ((60 * 2) + 30)
+
+    while json_response['status']['is_complete'] != True and sleep_counter <= sleep_max_counter:
+        sleep_counter += 1
+        sleep(2)
+
+        response = plans_get_by_id(env, api, auth, level, plan_id)
+        assert response.status_code == 200
+        json_response = response.json()
+
+    if sleep_counter >= sleep_max_counter:
+        assert json_response['status']['is_complete'] is True, "Timeout Exceeded\n{0}".format(json_response)
+
+    elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is False:
+        assert json_response['status']['is_complete'] is True
+        assert json_response['status']['has_error'] is True, "hasError is not TRUE\n{0}".format(json_response)
+
+    elif json_response['status']['is_complete'] is True and json_response['status']['has_error'] is True:
+        assert json_response['status']['step_name'] == "Generating a partition"
+        assert json_response['status']['is_complete'] is True
+        assert json_response['status']['has_error'] is True
+        assert json_response['status']['message'] == "An error has occurred in the workflow while generating a route " \
+                                                     "for the requested field. The workflow has been updated " \
+                                                     "accordingly and the process " \
+                                                     "terminated", "Response: \n{0}".format(json_response)
