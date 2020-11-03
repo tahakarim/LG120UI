@@ -176,7 +176,7 @@ def test_plans_get_response_data_validation(env, api, auth, level, short):
 
     return: None
     """
-    payload = deepcopy(params.payload)
+    payload = deepcopy(params.payload_all_fields)
     ### Temp Code
     # payload = json.dumps(payload)
 
