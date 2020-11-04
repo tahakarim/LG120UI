@@ -187,7 +187,7 @@ def test_plans_get_response_data_validation_with_initial_wayline(env, api, auth,
     initial_wayline_value = payload['field']['initial_wayline']
     payload = json.dumps(payload)
 
-    response = plans_post_payload(env, api, auth, level, payload)
+    response = plans_post_payload(env, api, 'gigya', level, payload)
 
     assert response.status_code == 200
 
@@ -197,7 +197,7 @@ def test_plans_get_response_data_validation_with_initial_wayline(env, api, auth,
     plan_id = json_response['plan_id']
 
     # Send a GET /plans by ID
-    response = plans_get_by_id(env, api, auth, level, plan_id)
+    response = plans_get_by_id(env, api, 'gigya', level, plan_id)
     assert response.status_code == 200
     json_response = response.json()
 
@@ -423,7 +423,7 @@ def test_plans_get_response_data_validation_with_initial_wayline(env, api, auth,
         sleep_counter += 1
         sleep(1)
 
-        response = plans_get_by_id(env, api, auth, level, plan_id)
+        response = plans_get_by_id(env, api, 'gigya', level, plan_id)
         json_response = response.json()
 
     assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
@@ -460,7 +460,7 @@ def test_plans_get_response_data_validation_without_initial_wayline(env, api, au
 
     payload = json.dumps(payload)
 
-    response = plans_post_payload(env, api, auth, level, payload)
+    response = plans_post_payload(env, api, 'aaat', level, payload)
 
     assert response.status_code == 200
 
@@ -470,7 +470,7 @@ def test_plans_get_response_data_validation_without_initial_wayline(env, api, au
     plan_id = json_response['plan_id']
 
     # Send a GET /plans by ID
-    response = plans_get_by_id(env, api, auth, level, plan_id)
+    response = plans_get_by_id(env, api, 'aaat', level, plan_id)
     assert response.status_code == 200
     json_response = response.json()
 
@@ -695,7 +695,7 @@ def test_plans_get_response_data_validation_without_initial_wayline(env, api, au
         sleep_counter += 1
         sleep(1)
 
-        response = plans_get_by_id(env, api, auth, level, plan_id)
+        response = plans_get_by_id(env, api, 'aaat', level, plan_id)
         json_response = response.json()
 
     assert sleep_counter < max_sleep, "Timeout Exceeded\n{0}".format(json_response)
